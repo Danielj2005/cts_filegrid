@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es" class="dark"> <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CTS File Master Pro</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./assets/css/animate.min.css">
+    <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./assets/css/bootstrap-icons.css">
+    <link rel="stylesheet" href="./assets/css/sweetalert2.min.css">
+    <link rel="stylesheet" href="./assets/css/toastify.css">
+    <link rel="icon" type="image/x-icon" href="./assets/img/logo.ico">
+
+    <script src="./assets/js/bootstrap.min.js"></script>
+    <script src="./assets/js/sweetalert2.min.js"></script>
+    <script src="./assets/js/toastify.js"></script>
+    <script src="./assets/js/app.js"></script>
+
+
+</head>
+<body class="bg-cts-bg font-sans h-screen overflow-hidden overflow-y-auto text-cts-text">
+    
+    <div id="license-overlay" class="fixed inset-0 z-[100] bg-gray-900 flex items-center justify-center p-6 hidden animate__animated animate__fadeIn">
+        <div class="bg-cts-card p-8 rounded-3xl border border-gray-700 max-w-md w-full text-center shadow-2xl animate__animated animate__zoomIn animate__faster">
+            <img src="./assets/img/logo.png" class="w-16 mx-auto mb-4 animate__animated animate__bounceIn">
+            <h2 class="text-xl font-bold mb-2">Activación de Producto</h2>
+            <p class="text-gray-400 text-sm mb-6">File Master Pro requiere una licencia válida.</p>
+            
+            <div class="text-left mb-4">
+                <label class="text-[10px] text-gray-500 uppercase font-bold">Tu ID de Hardware:</label>
+                <div class="flex gap-2">
+                    <input type="text" id="hwid-display" readonly class="flex-1 bg-gray-800 p-2 rounded text-xs border border-gray-700">
+                    <button onclick="copiarHWID()" class="bg-gray-700 p-2 rounded hover:bg-gray-600">
+                        <img src="./assets/img/copy-plus.svg" alt="Copy icon" class="text-cts-accent group-hover:scale-110 transition-transform">
+                    </button>
+                </div>
+            </div>
+
+            <input type="text" id="input-key" placeholder="Introduce tu Key aquí" 
+                class="w-full bg-gray-800 border border-gray-700 p-3 rounded-xl mb-4 text-center text-sm focus:border-cts-accent outline-none">
+            
+            <button onclick="validarLicenciaUI()" class="w-full bg-cts-accent text-black font-bold p-3 rounded-xl hover:scale-105 transition-all">
+                ACTIVAR SOFTWARE
+            </button>
+        </div>
+    </div>
+
+    <header class="animate__animated animate__fadeInLeft animate__faster bg-cts-card border-gray-700 border-r flex gap-3 h-20 items-center justify-center p-4 text-center">
+
+        <img src="./assets/img/logo.png" alt="CTS Logo" class="h-60 mb-2">
+        <h1 class="text-cts-accent font-bold text-xl">File Master Pro</h1>
+    </header>
+
+    <main class="flex-1 p-10">
+        
+        <section id="" class="grid-cols-1 md:grid-cols-2 gap-6 mb-10 animate__animated animate__fadeInUp">
+            <div class="overflow-hidden bg-cts-card p-6 rounded-2xl border border-gray-700 hover:border-cts-accent transition-all animate__animated animate__fadeInUp animate__delay-1s">
+                <div class="flex justify-between items-center mb-4 ">
+                    <h2 class="text-2xl font-semibold">¿Qué carpeta ordenamos hoy?</h2>
+                    <button onclick="newTask()" class="bg-cts-accent text-cts-bg px-4 py-2 rounded-lg font-bold animate__animated animate__pulse animate__infinite animate__slow"><span class="text-1xl">+</span> Nueva Tarea</button>
+                </div>
+                <input id="input-ruta" type="text" placeholder="Seleccionar carpeta..." class="w-full p-2 rounded bg-gray-700 mb-4 text-xs">
+                
+                <div class="flex justify-around gap-2 ">
+                    <button onclick="showView('view-dashboard')" 
+                            class="text-cts-bg px-4 py-2 font-bold w-full flex items-center space-x-3 p-3 text-gray-300 hover:bg-gray-700 hover:text-cts-accent rounded-xl transition-all group">
+                        <img src="./assets/img/clipboard-list.svg" alt="dashboard Logo" 
+                            class="text-cts-accent group-hover:scale-110 transition-transform">
+                        
+                        <span class="font-medium">Orden Estándar</span>
+                    </button>
+
+                    <button onclick="showView('view-multimedia')" 
+                            class="w-full flex items-center space-x-3 p-3 text-gray-300 hover:bg-gray-700 hover:text-blue-400 rounded-xl transition-all group">
+                        <img src="./assets/img/brain.svg" alt="multimedia Logo" class="text-blue-400 group-hover:-translate-y-1 transition-transform">
+                        <span class="font-medium">Orden Inteligente</span>
+                    </button>
+
+                    <button onclick="showView('view-limpieza')" 
+                            class="w-full flex items-center space-x-3 p-3 text-gray-300 hover:bg-gray-700 hover:text-red-400 rounded-xl transition-all group">
+                        <img src="./assets/img/paintbrush.svg" alt="limpieza Logo" class="text-red-400 group-hover:-translate-y-1 transition-transform">
+                        <span class="font-medium">Limpieza</span>
+                    </button>
+
+                    <button onclick="showView('view-extraccion')" 
+                            class="w-full flex items-center space-x-3 p-3 text-gray-300 hover:bg-gray-700 hover:text-purple-400 rounded-xl transition-all group">
+                        <img src="./assets/img/copy-minus.svg" alt="limpieza Logo" class="text-purple-800 group-hover:-translate-y-1 transition-transform">
+                        <span class="font-medium">Extracción Selectiva</span>
+                    </button>
+
+
+                    <button onclick="showView('view-avanzado')" 
+                            class="w-full flex items-center space-x-3 p-3 text-gray-300 hover:bg-gray-700 hover:text-gray-100 rounded-xl transition-all group">
+                        <img src="./assets/img/sliders-horizontal.svg" alt="avanzado Logo" class="text-gray-400 group-hover:rotate-180 transition-transform">
+                        <span class="font-medium">Modo Avanzado</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-dashboard" style="display:none" class="view hidd animate__animated animate__fadeInUp">
+            <div class="animate__animated animate__delay-1s animate__fadeInUp bg-cts-card border border-gray-700 flex gap-6 hover:border-cts-accent items-center justify-between p-6 rounded-2xl transition-all">
+                <div class="">
+                    <h3 class="text-cts-accent text-lg font-bold mb-3">Organización Estándar</h3>
+                    <p class="text-sm text-gray-400 mb-5">Mueve tus archivos a carpetas por categoría (Documentos, Imágenes, etc).</p>
+                </div>
+
+                
+                <button onclick="ejecutarModulo('estandar')" class="bg-cts-accent text-cts-bg p-3 rounded-xl font-bold hover:opacity-80">¡ORDENAR AHORA!</button>
+            </div>
+        </section>
+
+        <section id="view-multimedia" style="display:none" class="view hidd animate__animated animate__fadeInUp mb-10">
+            
+            <div class="bg-cts-card p-6 rounded-2xl border border-gray-700 hover:border-[#60a5fa] ">
+                
+                <div class="flex justify-between items-center mb-8 animate__animated animate__fadeInDown">
+                    <h2 class="text-2xl font-bold text-[#60a5fa]">Orden Inteligente</h2>
+                    <span class="bg-blue-500/20 text-blue-400 text-xs px-3 py-1 rounded-full border border-blue-500/30">AI Powered</span>
+                </div>
+                <div class="flex gap-6 items-center justify-between">
+
+                    <div class="">
+                        <p class="text-gray-400 mb-6">Escanea carpetas y subcarpetas, organizando los archivos dentro de cada una por tipo y fecha de creación/modificación. Mantiene la jerarquía de carpetas intacta.</p>
+    
+                        <div class="space-y-4 mb-6">
+                            <label class="flex items-center space-x-3 text-sm">
+                                <input type="checkbox" id="inteligente-include-subfolders" class="rounded border-gray-600 bg-gray-900 text-cts-accent" checked>
+                                <span>Incluir subcarpetas</span>
+                            </label>
+                            <label class="flex items-center space-x-3 text-sm">
+                                <input type="checkbox" id="inteligente-sort-by-date" class="rounded border-gray-600 bg-gray-900 text-cts-accent" checked>
+                                <span>Ordenar por fecha (Año/Mes)</span>
+                            </label>
+                        </div>
+                    </div>
+    
+                    <button onclick="ejecutarModulo('inteligente')" class="bg-blue-600 hover:bg-blue-500 text-white p-4 rounded-xl font-bold transition-all">
+                        ORGANIZAR INTELIGENTEMENTE
+                    </button>
+                </div>
+                
+            </div>
+        </section>
+
+        <section id="view-limpieza" style="display:none" class="view hidd animate__animated animate__fadeInUp mb-10">
+            <div class="bg-cts-card p-6 rounded-2xl border border-gray-700 hover:border-[#f87171] transition-all flex gap-6 items-center justify-between">
+                <div class="">
+                    <h2 class="text-2xl font-bold text-red-400 mb-8 animate__animated animate__fadeInDown">Limpieza de Duplicados</h2>
+                    <div class="text-center py-4 border-2 border-dashed border-gray-700 rounded-xl mb-6">
+                        <p class="text-gray-500">El programa creará un código unico en base al contenido de cada archivo para garantizar que son 100% idénticos.</p>
+                    </div>
+
+                </div>
+                
+                <button onclick="ejecutarModulo('limpieza')" class="bg-red-600 hover:bg-red-500 text-white p-4 rounded-xl font-bold transition-all">
+                    ESCANEAR Y ELIMINAR COPIAS 
+                </button>
+            </div>
+        </section>
+
+        <section id="view-extraccion" style="display:one" class="view hidd animate__animated animate__fadeInUp mb-10">
+            <div class="bg-cts-card p-6 rounded-2xl border border-gray-700 hover:border-purple-400 animate__animated animate__delay-1s animate__fadeInUp ">
+                <h4 class="font-bold mb-4 text-purple-400 text-sm">Extracción de archivos por selección</h4>
+                
+                <div id="extension-badges" class="flex flex-wrap gap-2 mb-4">
+                    <button data-ext-id="prog" onclick="toggleExtension('all',['.zip', '.rar', '.7z', '.tar', '.gz', '.tar.gz', '.tgz', '.bz2', '.xz', '.iso','.pdf', '.docx', '.doc', '.txt', '.xlsx', '.xls', '.pptx', '.ppt', '.odt', '.ods', '.odp', '.rtf', '.csv', '.md', '.html', '.htm', '.xml', '.json', '.log', '.mp3', '.wav', '.flac', '.aac', '.ogg', '.m4a', '.wma', '.exe', '.msi', '.bat', '.apk', '.jar','.jpg', '.png', '.jpeg', '.png', '.webp', '.gif', '.bmp', '.tiff', '.tif', '.svg', '.heic', '.ico', '.psd','.mp4', '.mkv', '.avi', '.mov', '.wmv', '.flv', '.webm', '.mpeg', '.mpg', '.m4v',])" 
+                            class="bg-gray-800 border border-gray-600 ext-badge flex gap-2 hover:border-purple-400 items-center px-3 py-1 rounded-full transition-all">
+                        <img src="./assets/img/check-check.svg" alt="Programas Logo" class="w-6">
+                        Todo
+                    </button>
+                    <button data-ext-id="docs" onclick="toggleExtension('docs', ['.pdf', '.docx', '.doc', '.txt', '.xlsx', '.xls', '.pptx', '.ppt', '.odt', '.ods', '.odp', '.rtf', '.csv', '.md', '.html', '.htm', '.xml', '.json', '.log'])" 
+                            class="bg-gray-800 border border-gray-600 ext-badge flex gap-2 hover:border-purple-400 items-center px-3 py-1 rounded-full transition-all">
+                        <img src="./assets/img/file.svg" alt="Documentos Logo" class="w-6">
+                        Documentos
+                    </button>
+                    <button data-ext-id="imgs" onclick="toggleExtension('imgs', ['.jpg', '.png', '.jpeg', '.png', '.webp', '.gif', '.bmp', '.tiff', '.tif', '.svg', '.heic', '.ico', '.psd'])" 
+                            class="bg-gray-800 border border-gray-600 ext-badge flex gap-2 hover:border-purple-400 items-center px-3 py-1 rounded-full transition-all">
+                        <img src="./assets/img/image.svg" alt="Imágenes Logo" class="w-6">
+                        Imágenes
+                    </button>
+                    <button data-ext-id="videos" onclick="toggleExtension('videos', ['.mp4', '.mkv', '.avi', '.mov', '.wmv', '.flv', '.webm', '.mpeg', '.mpg', '.m4v'])" 
+                            class="bg-gray-800 border border-gray-600 ext-badge flex gap-2 hover:border-purple-400 items-center px-3 py-1 rounded-full transition-all">
+                        <img src="./assets/img/clapperboard.svg" alt="Videos Logo" class="w-6">
+                        Videos
+                    </button>
+                    <button data-ext-id="audio" onclick="toggleExtension('audio', ['.mp3', '.wav', '.flac', '.aac', '.ogg', '.m4a', '.wma'])" 
+                            class="bg-gray-800 border border-gray-600 ext-badge flex gap-2 hover:border-purple-400 items-center px-3 py-1 rounded-full transition-all">
+                        <img src="./assets/img/headphones.svg" alt="Audio Logo" class="w-6">
+                        Audio
+                    </button>
+                    <button data-ext-id="compressed" onclick="toggleExtension('compressed', ['.zip', '.rar', '.7z', '.tar', '.gz', '.tar.gz', '.tgz', '.bz2', '.xz', '.iso'])" 
+                            class="bg-gray-800 border border-gray-600 ext-badge flex gap-2 hover:border-purple-400 items-center px-3 py-1 rounded-full transition-all">
+                        <img src="./assets/img/file-archive.svg" alt="Comprimidos Logo" class="w-6">
+                        Comprimidos
+                    </button>
+                    <button data-ext-id="prog" onclick="toggleExtension('prog', ['.exe', '.msi', '.bat', '.apk', '.jar'])" 
+                            class="bg-gray-800 border border-gray-600 ext-badge flex gap-2 hover:border-purple-400 items-center px-3 py-1 rounded-full transition-all">
+                        <img src="./assets/img/settings.svg" alt="Programas Logo" class="w-6">
+                        Programas
+                    </button>
+                </div>
+                
+                <div class="mb-4">                    
+                    <div class="flex gap-2 items-center">
+                        <input class="bg-transparent form-check-input fs-5" type="checkbox" value="" id="create-carpet-type">
+                        <label class="form-check-label" for="checkDefault">Crear subcarpetas por tipo (Video, Audio, etc.)</label>
+                    </div>
+                    
+                    <div class="flex gap-2 items-center">
+                        <input class="bg-transparent form-check-input fs-5" type="checkbox" value="" id="delete-carpet">
+                        <label class="form-check-label" for="checkDefault">ELIMINAR carpetas de origen (usar con precaución)</label>
+                    </div>
+                    
+                    <div class="flex gap-2 items-center">
+                        <input class="bg-transparent form-check-input fs-5" type="checkbox" value="" id="mode-simulation">
+                        <label class="form-check-label" for="checkDefault">Modo SIMULACIÓN (no mueve ni borra nada, solo reporta)</label>
+                    </div>
+                    
+                    <div class="flex gap-2 items-center">
+                        <input class="bg-transparent form-check-input fs-5" type="checkbox" value="" id="sort-by-date">
+                        <label class="form-check-label" for="sort-by-date">Ordenar por fecha (Año/Mes)</label>
+                    </div>
+                </div>
+
+                <div class="row align-items-center justify-content-between mb-2">
+                    <div class="col-12 col-md-9 mb-4">
+                        <label class="text-xs text-gray-400 uppercase tracking-[0.2em] mb-2 block">Nombre de carpeta destino</label>
+                        <input id="custom-folder-name" type="text" placeholder="Ej. OrdenPersonalizada" class="w-full p-2 rounded bg-gray-800 border border-gray-700 text-xs text-gray-200 focus:border-purple-400 outline-none" />
+                    </div>
+                    <div class="col-12 col-md-3 text-center mb-4">
+                        <button onclick="ejecutarModulo('extraccion')" class="mb-4 bg-purple-600 text-white p-2 rounded-xl font-bold hover:opacity-80">Ejecutar Extracción</button>
+                        <input type="hidden" id="custom-extensions-extraccion">
+                    </div>
+                </div>
+                <div id="display-selected" class="text-emerald-400">Ninguna categoría seleccionada</div>
+            </div>
+        </section>
+
+
+        <section id="view-avanzado" style="display:none" class="view hidd animate__animated animate__fadeInUp mb-10">
+            <div class="bg-cts-card p-6 rounded-2xl border border-gray-700 animate__animated animate__zoomIn">
+                <h4 class="font-bold mb-4 text-cts-accent text-sm">Selección Inteligente de Archivos</h4>
+                <div id="extension-badges" class="flex flex-wrap gap-2 mb-4">
+                    <button data-ext-id="docs" onclick="toggleExtension('docs', ['.pdf', '.docx', '.doc', '.txt', '.xlsx', '.xls', '.pptx', '.ppt', '.odt', '.ods', '.odp', '.rtf', '.csv', '.md', '.html', '.htm', '.xml', '.json', '.log'])" 
+                            class="ext-badge bg-gray-800 border border-gray-600 px-3 py-1 rounded-full text-xs hover:border-cts-accent transition-all">
+                        📄 Documentos
+                    </button>
+                    <button data-ext-id="imgs" onclick="toggleExtension('imgs', ['.jpg', '.png', '.jpeg', '.png', '.webp', '.gif', '.bmp', '.tiff', '.tif', '.svg', '.heic', '.ico', '.psd'])" 
+                            class="ext-badge bg-gray-800 border border-gray-600 px-3 py-1 rounded-full text-xs hover:border-cts-accent transition-all">
+                        🖼️ Imágenes
+                    </button>
+                    <button data-ext-id="videos" onclick="toggleExtension('videos', ['.mp4', '.mkv', '.avi', '.mov', '.wmv', '.flv', '.webm', '.mpeg', '.mpg', '.m4v'])" 
+                            class="ext-badge bg-gray-800 border border-gray-600 px-3 py-1 rounded-full text-xs hover:border-cts-accent transition-all">
+                        🎬 Videos
+                    </button>
+                    <button data-ext-id="audio" onclick="toggleExtension('audio', ['.mp3', '.wav', '.flac', '.aac', '.ogg', '.m4a', '.wma'])" 
+                            class="ext-badge bg-gray-800 border border-gray-600 px-3 py-1 rounded-full text-xs hover:border-cts-accent transition-all">
+                        🎧 Audio
+                    </button>
+                    <button data-ext-id="compressed" onclick="toggleExtension('compressed', ['.zip', '.rar', '.7z', '.tar', '.gz', '.tar.gz', '.tgz', '.bz2', '.xz', '.iso'])" 
+                            class="ext-badge bg-gray-800 border border-gray-600 px-3 py-1 rounded-full text-xs hover:border-cts-accent transition-all">
+                        🗜️ Comprimidos
+                    </button>
+                    <button data-ext-id="prog" onclick="toggleExtension('prog', ['.exe', '.msi', '.bat', '.apk', '.jar'])" 
+                            class="ext-badge bg-gray-800 border border-gray-600 px-3 py-1 rounded-full text-xs hover:border-cts-accent transition-all">
+                        ⚙️ Programas
+                    </button>
+                </div>
+                <div class="mb-4">
+                    <label class="text-xs text-gray-400 uppercase tracking-[0.2em] mb-2 block">Nombre de carpeta destino</label>
+                    <input id="custom-folder-name" type="text" placeholder="Ej. OrdenPersonalizada" class="w-full p-2 rounded bg-gray-800 border border-gray-700 text-xs text-gray-200 focus:border-cts-accent outline-none" />
+                </div>
+                <div class="mb-4">
+                    <label class="flex items-center space-x-3 text-sm">
+                        <input type="checkbox" id="sort-by-date" class="rounded border-gray-600 bg-gray-900 text-cts-accent">
+                        <span>Ordenar por fecha (Año/Mes)</span>
+                    </label>
+                </div>
+                <button onclick="ejecutarModulo('avanzado')" class="mb-4 w-full bg-cts-accent text-cts-bg p-3 rounded-xl font-bold hover:opacity-80">Ejecutar Avanzado</button>
+                <input type="hidden" id="custom-extensions">
+                <div id="display-selected" class="text-[10px] text-gray-500 italic">Ninguna categoría seleccionada</div>
+            </div>
+        </section>
+
+
+    </main>
+    <footer class="bg-gray-800 text-gray-400 text-center p-4 text-sm">
+        <div class="text-xs text-gray-500">Create Tech Solutions © 2026</div>
+    </footer>
+</body>
+</html>
