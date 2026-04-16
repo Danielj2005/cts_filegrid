@@ -6,6 +6,7 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="./assets/css/animate.min.css">
+    <link rel="stylesheet" href="./assets/css/app.css">
     <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="./assets/css/bootstrap-icons.css">
     <link rel="stylesheet" href="./assets/css/sweetalert2.min.css">
@@ -54,11 +55,11 @@
 
     <main class="flex-1 p-10">
         
-        <section id="" class="grid-cols-1 md:grid-cols-2 gap-6 mb-10 animate__animated animate__fadeInUp">
-            <div class="overflow-hidden bg-cts-card p-6 rounded-2xl border border-gray-700 hover:border-cts-accent transition-all animate__animated animate__fadeInUp animate__delay-1s">
+        <section id="" class="grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+            <div class="section-dash overflow-hidden bg-cts-card p-6 rounded-2xl border border-gray-700 hover:border-cts-accent transition-all">
                 <div class="flex justify-between items-center mb-4 ">
                     <h2 class="text-2xl font-semibold">¿Qué carpeta ordenamos hoy?</h2>
-                    <button onclick="newTask()" class="bg-cts-accent text-cts-bg px-4 py-2 rounded-lg font-bold animate__animated animate__pulse animate__infinite animate__slow"><span class="text-1xl">+</span> Nueva Tarea</button>
+                    <button onclick="newTask()" class="bg-cts-accent text-cts-bg px-4 py-2 rounded-lg font-bold"><span class="text-1xl">+</span> Nueva Tarea</button>
                 </div>
                 <input id="input-ruta" type="text" placeholder="Seleccionar carpeta..." class="w-full p-2 rounded bg-gray-700 mb-4 text-xs">
                 
@@ -91,18 +92,18 @@
 
 
                     <button onclick="showView('view-avanzado')" 
-                            class="w-full flex items-center space-x-3 p-3 text-gray-300 hover:bg-gray-700 hover:text-gray-100 rounded-xl transition-all group">
-                        <img src="./assets/img/sliders-horizontal.svg" alt="avanzado Logo" class="text-gray-400 group-hover:rotate-180 transition-transform">
+                            class="w-full flex items-center space-x-3 p-3 text-gray-300 hover:bg-gray-700 hover:text-indigo-400 rounded-xl transition-all group">
+                        <img src="./assets/img/sliders-horizontal.svg" alt="avanzado Logo" class="text-indigo-900 group-hover:rotate-180 transition-transform">
                         <span class="font-medium">Modo Avanzado</span>
                     </button>
                 </div>
             </div>
         </section>
 
-        <section id="view-dashboard" style="display:none" class="view hidd animate__animated animate__fadeInUp">
-            <div class="animate__animated animate__delay-1s animate__fadeInUp bg-cts-card border border-gray-700 flex gap-6 hover:border-cts-accent items-center justify-between p-6 rounded-2xl transition-all">
+        <section id="view-dashboard" class="view ">
+            <div class="section-dashboard bg-cts-card border border-gray-700 flex gap-6 hover:border-cts-accent items-center justify-between p-6 rounded-2xl transition-all">
                 <div class="">
-                    <h3 class="text-cts-accent text-lg font-bold mb-3">Organización Estándar</h3>
+                    <h2 class="text-cts-accent text-2xl font-bold mb-3">Organización Estándar</h2>
                     <p class="text-sm text-gray-400 mb-5">Mueve tus archivos a carpetas por categoría (Documentos, Imágenes, etc).</p>
                 </div>
 
@@ -111,11 +112,11 @@
             </div>
         </section>
 
-        <section id="view-multimedia" style="display:none" class="view hidd animate__animated animate__fadeInUp mb-10">
+        <section id="view-multimedia" style="display:none" class="view mb-10">
             
-            <div class="bg-cts-card p-6 rounded-2xl border border-gray-700 hover:border-[#60a5fa] ">
+            <div class="section-multimedia bg-cts-card p-6 rounded-2xl border border-gray-700 hover:border-[#60a5fa] ">
                 
-                <div class="flex justify-between items-center mb-8 animate__animated animate__fadeInDown">
+                <div class="flex justify-between items-center mb-8">
                     <h2 class="text-2xl font-bold text-[#60a5fa]">Orden Inteligente</h2>
                     <span class="bg-blue-500/20 text-blue-400 text-xs px-3 py-1 rounded-full border border-blue-500/30">AI Powered</span>
                 </div>
@@ -124,15 +125,14 @@
                     <div class="">
                         <p class="text-gray-400 mb-6">Escanea carpetas y subcarpetas, organizando los archivos dentro de cada una por tipo y fecha de creación/modificación. Mantiene la jerarquía de carpetas intacta.</p>
     
-                        <div class="space-y-4 mb-6">
-                            <label class="flex items-center space-x-3 text-sm">
-                                <input type="checkbox" id="inteligente-include-subfolders" class="rounded border-gray-600 bg-gray-900 text-cts-accent" checked>
-                                <span>Incluir subcarpetas</span>
-                            </label>
-                            <label class="flex items-center space-x-3 text-sm">
-                                <input type="checkbox" id="inteligente-sort-by-date" class="rounded border-gray-600 bg-gray-900 text-cts-accent" checked>
-                                <span>Ordenar por fecha (Año/Mes)</span>
-                            </label>
+                        <div class="flex gap-2 items-center mb-4">
+                            <input class="bg-transparent form-check-input fs-5" type="checkbox" checked="true" value="" id="inteligente-include-subfolders">
+                            <label class="form-check-label" for="inteligente-include-subfolders">Incluir subcarpetas</label>
+                        </div>
+                        
+                        <div class="flex gap-2 items-center mb-4">
+                            <input class="bg-transparent form-check-input fs-5" type="checkbox" value="" id="inteligente-sort-by-date">
+                            <label class="form-check-label" for="inteligente-sort-by-date">Ordenar por fecha (Año/Mes)</label>
                         </div>
                     </div>
     
@@ -144,11 +144,11 @@
             </div>
         </section>
 
-        <section id="view-limpieza" style="display:none" class="view hidd animate__animated animate__fadeInUp mb-10">
-            <div class="bg-cts-card p-6 rounded-2xl border border-gray-700 hover:border-[#f87171] transition-all flex gap-6 items-center justify-between">
+        <section id="view-limpieza" style="display:none" class="view mb-10">
+            <div class="section-limpieza bg-cts-card p-6 rounded-2xl border border-gray-700 hover:border-danger transition-all flex gap-6 items-center justify-between">
                 <div class="">
-                    <h2 class="text-2xl font-bold text-red-400 mb-8 animate__animated animate__fadeInDown">Limpieza de Duplicados</h2>
-                    <div class="text-center py-4 border-2 border-dashed border-gray-700 rounded-xl mb-6">
+                    <h2 class="text-2xl font-bold text-red-400 mb-8">Limpieza de Duplicados</h2>
+                    <div class="text-center p-4 border-2 border-dashed border-gray-700 rounded-xl mb-6">
                         <p class="text-gray-500">El programa creará un código unico en base al contenido de cada archivo para garantizar que son 100% idénticos.</p>
                     </div>
 
@@ -160,42 +160,36 @@
             </div>
         </section>
 
-        <section id="view-extraccion" style="display:one" class="view hidd animate__animated animate__fadeInUp mb-10">
-            <div class="bg-cts-card p-6 rounded-2xl border border-gray-700 hover:border-purple-400 animate__animated animate__delay-1s animate__fadeInUp ">
-                <h4 class="font-bold mb-4 text-purple-400 text-sm">Extracción de archivos por selección</h4>
+        <section id="view-extraccion" style="display:none" class="view mb-10">
+            <div class="section-ext bg-cts-card p-6 rounded-2xl border border-gray-700 hover:border-purple-400">
+                <h2 class="text-2xl font-bold mb-4 text-purple-400">Extracción de archivos por selección</h2>
                 
-                <div id="extension-badges" class="flex flex-wrap gap-2 mb-4">
-                    <button data-ext-id="prog" onclick="toggleExtension('all',['.zip', '.rar', '.7z', '.tar', '.gz', '.tar.gz', '.tgz', '.bz2', '.xz', '.iso','.pdf', '.docx', '.doc', '.txt', '.xlsx', '.xls', '.pptx', '.ppt', '.odt', '.ods', '.odp', '.rtf', '.csv', '.md', '.html', '.htm', '.xml', '.json', '.log', '.mp3', '.wav', '.flac', '.aac', '.ogg', '.m4a', '.wma', '.exe', '.msi', '.bat', '.apk', '.jar','.jpg', '.png', '.jpeg', '.png', '.webp', '.gif', '.bmp', '.tiff', '.tif', '.svg', '.heic', '.ico', '.psd','.mp4', '.mkv', '.avi', '.mov', '.wmv', '.flv', '.webm', '.mpeg', '.mpg', '.m4v',])" 
-                            class="bg-gray-800 border border-gray-600 ext-badge flex gap-2 hover:border-purple-400 items-center px-3 py-1 rounded-full transition-all">
-                        <img src="./assets/img/check-check.svg" alt="Programas Logo" class="w-6">
-                        Todo
+                <div id="extraction-badges" class="flex flex-wrap gap-2 mb-4">
+                    <button id="extraccion-docs" onclick="selectBadgeExtraccion('view-extraccion','extraccion-docs')"
+                        class="bg-gray-800 border border-gray-600 ext-badge flex gap-2 hover:border-purple-400 items-center px-3 py-1 rounded-full transition-all">
+                            <img src="./assets/img/file.svg" alt="Documentos Logo" class="w-6">
+                            Documentos
                     </button>
-                    <button data-ext-id="docs" onclick="toggleExtension('docs', ['.pdf', '.docx', '.doc', '.txt', '.xlsx', '.xls', '.pptx', '.ppt', '.odt', '.ods', '.odp', '.rtf', '.csv', '.md', '.html', '.htm', '.xml', '.json', '.log'])" 
-                            class="bg-gray-800 border border-gray-600 ext-badge flex gap-2 hover:border-purple-400 items-center px-3 py-1 rounded-full transition-all">
-                        <img src="./assets/img/file.svg" alt="Documentos Logo" class="w-6">
-                        Documentos
-                    </button>
-                    <button data-ext-id="imgs" onclick="toggleExtension('imgs', ['.jpg', '.png', '.jpeg', '.png', '.webp', '.gif', '.bmp', '.tiff', '.tif', '.svg', '.heic', '.ico', '.psd'])" 
-                            class="bg-gray-800 border border-gray-600 ext-badge flex gap-2 hover:border-purple-400 items-center px-3 py-1 rounded-full transition-all">
+                    <button id="extraccion-imgs" onclick="selectBadgeExtraccion('view-extraccion','extraccion-imgs')" class="bg-gray-800 border border-gray-600 ext-badge flex gap-2 hover:border-purple-400 items-center px-3 py-1 rounded-full transition-all">
                         <img src="./assets/img/image.svg" alt="Imágenes Logo" class="w-6">
                         Imágenes
                     </button>
-                    <button data-ext-id="videos" onclick="toggleExtension('videos', ['.mp4', '.mkv', '.avi', '.mov', '.wmv', '.flv', '.webm', '.mpeg', '.mpg', '.m4v'])" 
+                    <button id="extraccion-videos" onclick="selectBadgeExtraccion('view-extraccion','extraccion-videos')" 
                             class="bg-gray-800 border border-gray-600 ext-badge flex gap-2 hover:border-purple-400 items-center px-3 py-1 rounded-full transition-all">
                         <img src="./assets/img/clapperboard.svg" alt="Videos Logo" class="w-6">
                         Videos
                     </button>
-                    <button data-ext-id="audio" onclick="toggleExtension('audio', ['.mp3', '.wav', '.flac', '.aac', '.ogg', '.m4a', '.wma'])" 
+                    <button id="extraccion-audio" onclick="selectBadgeExtraccion('view-extraccion','extraccion-audio')" 
                             class="bg-gray-800 border border-gray-600 ext-badge flex gap-2 hover:border-purple-400 items-center px-3 py-1 rounded-full transition-all">
                         <img src="./assets/img/headphones.svg" alt="Audio Logo" class="w-6">
                         Audio
                     </button>
-                    <button data-ext-id="compressed" onclick="toggleExtension('compressed', ['.zip', '.rar', '.7z', '.tar', '.gz', '.tar.gz', '.tgz', '.bz2', '.xz', '.iso'])" 
+                    <button id="extraccion-compressed" onclick="selectBadgeExtraccion('view-extraccion','extraccion-compressed')" 
                             class="bg-gray-800 border border-gray-600 ext-badge flex gap-2 hover:border-purple-400 items-center px-3 py-1 rounded-full transition-all">
                         <img src="./assets/img/file-archive.svg" alt="Comprimidos Logo" class="w-6">
                         Comprimidos
                     </button>
-                    <button data-ext-id="prog" onclick="toggleExtension('prog', ['.exe', '.msi', '.bat', '.apk', '.jar'])" 
+                    <button id="extraccion-prog" onclick="selectBadgeExtraccion('view-extraccion','extraccion-prog')" 
                             class="bg-gray-800 border border-gray-600 ext-badge flex gap-2 hover:border-purple-400 items-center px-3 py-1 rounded-full transition-all">
                         <img src="./assets/img/settings.svg" alt="Programas Logo" class="w-6">
                         Programas
@@ -210,12 +204,12 @@
                     
                     <div class="flex gap-2 items-center">
                         <input class="bg-transparent form-check-input fs-5" type="checkbox" value="" id="delete-carpet">
-                        <label class="form-check-label" for="checkDefault">ELIMINAR carpetas de origen (usar con precaución)</label>
+                        <label class="form-check-label" for="delete-carpet">ELIMINAR carpetas de origen (usar con precaución)</label>
                     </div>
                     
                     <div class="flex gap-2 items-center">
                         <input class="bg-transparent form-check-input fs-5" type="checkbox" value="" id="mode-simulation">
-                        <label class="form-check-label" for="checkDefault">Modo SIMULACIÓN (no mueve ni borra nada, solo reporta)</label>
+                        <label class="form-check-label" for="mode-simulation">Modo SIMULACIÓN (no mueve ni borra nada, solo reporta)</label>
                     </div>
                     
                     <div class="flex gap-2 items-center">
@@ -227,60 +221,64 @@
                 <div class="row align-items-center justify-content-between mb-2">
                     <div class="col-12 col-md-9 mb-4">
                         <label class="text-xs text-gray-400 uppercase tracking-[0.2em] mb-2 block">Nombre de carpeta destino</label>
-                        <input id="custom-folder-name" type="text" placeholder="Ej. OrdenPersonalizada" class="w-full p-2 rounded bg-gray-800 border border-gray-700 text-xs text-gray-200 focus:border-purple-400 outline-none" />
+                        <input id="custom-folder-name-ext" type="text" placeholder="Ej. OrdenPersonalizada" class="w-full p-2 rounded bg-gray-800 border border-gray-700 text-xs text-gray-200 focus:border-purple-400 outline-none" />
                     </div>
                     <div class="col-12 col-md-3 text-center mb-4">
                         <button onclick="ejecutarModulo('extraccion')" class="mb-4 bg-purple-600 text-white p-2 rounded-xl font-bold hover:opacity-80">Ejecutar Extracción</button>
                         <input type="hidden" id="custom-extensions-extraccion">
                     </div>
                 </div>
-                <div id="display-selected" class="text-emerald-400">Ninguna categoría seleccionada</div>
+                <div class="display-selected text-emerald-400">Ninguna categoría seleccionada</div>
             </div>
         </section>
 
 
-        <section id="view-avanzado" style="display:none" class="view hidd animate__animated animate__fadeInUp mb-10">
-            <div class="bg-cts-card p-6 rounded-2xl border border-gray-700 animate__animated animate__zoomIn">
-                <h4 class="font-bold mb-4 text-cts-accent text-sm">Selección Inteligente de Archivos</h4>
+        <section id="view-avanzado" style="display:none" class="view mb-10">
+            <div class="section-avanzado bg-cts-card p-6 rounded-2xl border border-gray-700 animate__animated animate__zoomIn">
+                <h2 class="text-2xl font-bold mb-4 text-indigo-600">Selección Inteligente de Archivos</h2>
                 <div id="extension-badges" class="flex flex-wrap gap-2 mb-4">
-                    <button data-ext-id="docs" onclick="toggleExtension('docs', ['.pdf', '.docx', '.doc', '.txt', '.xlsx', '.xls', '.pptx', '.ppt', '.odt', '.ods', '.odp', '.rtf', '.csv', '.md', '.html', '.htm', '.xml', '.json', '.log'])" 
-                            class="ext-badge bg-gray-800 border border-gray-600 px-3 py-1 rounded-full text-xs hover:border-cts-accent transition-all">
-                        📄 Documentos
+                    <button id="extension-docs" onclick="selectBadgeExtraccion('view-avanzado','extension-docs')" 
+                            class="bg-gray-800 border border-gray-600 ext-badge flex gap-2 hover:border-indigo-900 items-center px-3 py-1 rounded-full transition-all">
+                        <img src="./assets/img/file.svg" alt="Documentos Logo" class="w-6">
+                        Documentos
                     </button>
-                    <button data-ext-id="imgs" onclick="toggleExtension('imgs', ['.jpg', '.png', '.jpeg', '.png', '.webp', '.gif', '.bmp', '.tiff', '.tif', '.svg', '.heic', '.ico', '.psd'])" 
-                            class="ext-badge bg-gray-800 border border-gray-600 px-3 py-1 rounded-full text-xs hover:border-cts-accent transition-all">
-                        🖼️ Imágenes
+                    <button id="extension-imgs" onclick="selectBadgeExtraccion('view-avanzado','extension-imgs')" 
+                            class="bg-gray-800 border border-gray-600 ext-badge flex gap-2 hover:border-indigo-900 items-center px-3 py-1 rounded-full transition-all">
+                        <img src="./assets/img/image.svg" alt="Imágenes Logo" class="w-6">
+                        Imágenes
                     </button>
-                    <button data-ext-id="videos" onclick="toggleExtension('videos', ['.mp4', '.mkv', '.avi', '.mov', '.wmv', '.flv', '.webm', '.mpeg', '.mpg', '.m4v'])" 
-                            class="ext-badge bg-gray-800 border border-gray-600 px-3 py-1 rounded-full text-xs hover:border-cts-accent transition-all">
-                        🎬 Videos
+                    <button id="extension-videos" onclick="selectBadgeExtraccion('view-avanzado','extension-videos')" 
+                            class="bg-gray-800 border border-gray-600 ext-badge flex gap-2 hover:border-indigo-900 items-center px-3 py-1 rounded-full transition-all">
+                        <img src="./assets/img/clapperboard.svg" alt="Videos Logo" class="w-6">
+                        Videos
                     </button>
-                    <button data-ext-id="audio" onclick="toggleExtension('audio', ['.mp3', '.wav', '.flac', '.aac', '.ogg', '.m4a', '.wma'])" 
-                            class="ext-badge bg-gray-800 border border-gray-600 px-3 py-1 rounded-full text-xs hover:border-cts-accent transition-all">
-                        🎧 Audio
+                    <button id="extension-audio" onclick="selectBadgeExtraccion('view-avanzado','extension-audio')" 
+                            class="bg-gray-800 border border-gray-600 ext-badge flex gap-2 hover:border-indigo-400 items-center px-3 py-1 rounded-full transition-all">
+                        <img src="./assets/img/headphones.svg" alt="Audio Logo" class="w-6">
+                        Audio
                     </button>
-                    <button data-ext-id="compressed" onclick="toggleExtension('compressed', ['.zip', '.rar', '.7z', '.tar', '.gz', '.tar.gz', '.tgz', '.bz2', '.xz', '.iso'])" 
-                            class="ext-badge bg-gray-800 border border-gray-600 px-3 py-1 rounded-full text-xs hover:border-cts-accent transition-all">
-                        🗜️ Comprimidos
+                    <button id="extension-compressed" onclick="selectBadgeExtraccion('view-avanzado','extension-compressed')" 
+                            class="bg-gray-800 border border-gray-600 ext-badge flex gap-2 hover:border-indigo-400 items-center px-3 py-1 rounded-full transition-all">
+                        <img src="./assets/img/file-archive.svg" alt="Comprimidos Logo" class="w-6">
+                        Comprimidos
                     </button>
-                    <button data-ext-id="prog" onclick="toggleExtension('prog', ['.exe', '.msi', '.bat', '.apk', '.jar'])" 
-                            class="ext-badge bg-gray-800 border border-gray-600 px-3 py-1 rounded-full text-xs hover:border-cts-accent transition-all">
-                        ⚙️ Programas
+                    <button id="extension-prog" onclick="selectBadgeExtraccion('view-avanzado','extension-prog')" 
+                            class="bg-gray-800 border border-gray-600 ext-badge flex gap-2 hover:border-indigo-400 items-center px-3 py-1 rounded-full transition-all">
+                        <img src="./assets/img/settings.svg" alt="Programas Logo" class="w-6">
+                        Programas
                     </button>
                 </div>
                 <div class="mb-4">
                     <label class="text-xs text-gray-400 uppercase tracking-[0.2em] mb-2 block">Nombre de carpeta destino</label>
                     <input id="custom-folder-name" type="text" placeholder="Ej. OrdenPersonalizada" class="w-full p-2 rounded bg-gray-800 border border-gray-700 text-xs text-gray-200 focus:border-cts-accent outline-none" />
                 </div>
-                <div class="mb-4">
-                    <label class="flex items-center space-x-3 text-sm">
-                        <input type="checkbox" id="sort-by-date" class="rounded border-gray-600 bg-gray-900 text-cts-accent">
-                        <span>Ordenar por fecha (Año/Mes)</span>
-                    </label>
+                <div class="flex gap-2 items-center mb-4">
+                    <input class="bg-transparent form-check-input fs-5" type="checkbox" value="" id="sort-by-date2">
+                    <label class="form-check-label" for="sort-by-date2">Ordenar por fecha (Año/Mes)</label>
                 </div>
-                <button onclick="ejecutarModulo('avanzado')" class="mb-4 w-full bg-cts-accent text-cts-bg p-3 rounded-xl font-bold hover:opacity-80">Ejecutar Avanzado</button>
+                <button onclick="ejecutarModulo('avanzado')" class="mb-4 w-full bg-indigo-900 text-white p-3 rounded-xl font-bold hover:opacity-80">Ejecutar Avanzado</button>
                 <input type="hidden" id="custom-extensions">
-                <div id="display-selected" class="text-[10px] text-gray-500 italic">Ninguna categoría seleccionada</div>
+                <div class="display-selected text-white">Ninguna categoría seleccionada</div>
             </div>
         </section>
 

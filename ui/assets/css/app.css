@@ -18,6 +18,7 @@ body {
     background: #090b11;
     color: #e5e7eb;
 }
+/*
 
 .app-shell {
     min-height: 100vh;
@@ -204,4 +205,49 @@ body {
     .button-secondary {
         width: 100%;
     }
+}
+ */
+
+.section-dash:hover{
+    border-color: #00ff9d !important;
+    transition: all;
+
+}
+
+.section-ext:hover{
+    border-color: #a855f7 !important;
+    transition: all;
+}
+
+.section-dashboard:hover{
+    border-color: #00ff9d !important;
+    transition: all;
+
+}
+.section-multimedia:hover{
+    border-color: #60a5fa !important;
+    transition: all;
+
+}
+.section-limpieza:hover{
+    border-color: #f87171 !important;
+    transition: all;
+
+}
+.section-avanzado:hover{
+    border-color: #312e81 !important;
+    transition: all;
+}
+
+
+.section-ext button:hover{
+    border-color: #ffffff !important;
+    background-color: #31015d !important;
+    transition: all;
+}
+
+.section-avanzado button:hover{
+    border-color: #ffffff !important;
+    background-color: #040159 !important;
+    transition: all;
 }

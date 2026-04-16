@@ -11,6 +11,7 @@ tailwind.config = {
           accent: "#00ff9d", // Tu verde esmeralda neón
           text: "#f3f4f6", // Texto claro
         },
+        danger: "#f87171",
       },
     },
   },
@@ -55,7 +56,9 @@ function getWebviewApi() {
 
 // Variable global para las extensiones
 let extensionesSeleccionadas = [];
+let currentView = 'dashboard';
 const categoriasSeleccionadas = new Set();
+
 const etiquetasExtensiones = {
   docs: "Documentos",
   imgs: "Imágenes",
@@ -63,84 +66,143 @@ const etiquetasExtensiones = {
   audio: "Audio",
   compressed: "Comprimidos",
   prog: "Programas",
-  all: "Todas las categorías"
 };
 
-function toggleExtension(id, lista) {
-  const badge = document.querySelector(`[data-ext-id="${id}"]`);
-  const estaSeleccionada = categoriasSeleccionadas.has(id);
+const ext_tag = {
+  docs: ['.pdf', '.docx', '.doc', '.txt', '.xlsx', '.xls', '.pptx', '.ppt', '.odt', '.ods', '.odp', '.rtf', '.csv', '.md', '.html', '.htm', '.xml', '.json', '.log'],
+  imgs: ['.jpg', '.png', '.jpeg', '.png', '.webp', '.gif', '.bmp', '.tiff', '.tif', '.svg', '.heic', '.ico', '.psd'],
+  videos: ['.mp4', '.mkv', '.avi', '.mov', '.wmv', '.flv', '.webm', '.mpeg', '.mpg', '.m4v'],
+  audio: ['.mp3', '.wav', '.flac', '.aac', '.ogg', '.m4a', '.wma'],
+  compressed: ['.zip', '.rar', '.7z', '.tar', '.gz', '.tar.gz', '.tgz', '.bz2', '.xz', '.iso'],
+  prog: ['.exe', '.msi', '.bat', '.apk', '.jar'],
+};
+
+const stateExtBadge = {
+  docs: false,  imgs: false,
+  videos: false,  audio: false,
+  compressed: false,  prog: false,
+};
+
+
+
+function selectBadgeExtraccion (id_section, id) {
+  const button = document.getElementById(id);
+
+  let id_ext_tag;
+  let color_badge;
+
+  if (id.includes('extraccion')) {
+
+    id_ext_tag = id.replace('extraccion-', '');
+    color_badge = "extraction";
+
+  }else if (id.includes('extension')) {
+
+    id_ext_tag = id.replace('extension-', '');
+    color_badge = "extension";
+
+  }else{  id_ext_tag = id; }
+
+  const lista = ext_tag[id_ext_tag] || [];
+
+  const bgColor = {
+    extraction: "bg-purple-800",
+    extension: "bg-indigo-800"
+  };
+
+  const borderColor = {
+    extraction: "border-purple-400",
+    extension: "border-indigo-400"
+  };
+
   
-  if (id === "all") {
-    if (estaSeleccionada) {
-      categoriasSeleccionadas.clear();
-      extensionesSeleccionadas = [];
-
-      if (badge) {
-        badge.classList.remove("bg-purple-800", "text-white", "border-purple-400");
-        badge.classList.add("bg-gray-800", "border-gray-600", "text-white");
-      }
-      return Toast.fire({ icon: "info", title: `Filtro ${etiquetasExtensiones[id]} desactivado` });
-
+  const updateSelectedDisplay = () => {
+    const display = document.querySelector(`#${id_section} .display-selected`);
+    if (!display) return;
+    if (extensionesSeleccionadas.length === 0) {
+      display.innerText = 'Ninguna categoría seleccionada';
     } else {
-
-
-      categoriasSeleccionadas.clear();
-
-      for (const [key, value] of Object.entries(etiquetasExtensiones)) {
-        if (key !== "all") {
-          categoriasSeleccionadas.add(key);
-        }
-      }
-
-      extensionesSeleccionadas = [];
-      for (const [key, value] of Object.entries(etiquetasExtensiones)) {
-        if (key !== "all") {
-          extensionesSeleccionadas = [...new Set([...extensionesSeleccionadas, ...lista])];
-        }
-      }
-      if (badge) {
-        badge.classList.add("bg-purple-800", "text-white", "border-purple-400");
-        badge.classList.remove("bg-gray-800", "border-gray-600", "text-white");
-      }
-      return Toast.fire({ icon: "success", title: `Filtro ${etiquetasExtensiones[id]} activado` });
-    }
-  }
-
-  if (estaSeleccionada) {
-    categoriasSeleccionadas.delete(id);
-    extensionesSeleccionadas = extensionesSeleccionadas.filter(
-      (ext) => !lista.includes(ext),
-    );
-    if (badge) {
-      badge.classList.remove("bg-purple-800", "text-white", "border-purple-400");
-      badge.classList.add("bg-gray-800", "border-gray-600", "text-white");
-    }
-    Toast.fire({ icon: "info", title: `Filtro ${etiquetasExtensiones[id]} desactivado` });
-  } else {
-    categoriasSeleccionadas.add(id);
-    extensionesSeleccionadas = [
-      ...new Set([...extensionesSeleccionadas, ...lista]),
-    ];
-    if (badge) {
-      badge.classList.add("bg-purple-800", "text-white", "border-purple-400");
-      badge.classList.remove("bg-gray-800", "border-gray-600", "text-white");
-    }
-    Toast.fire({ icon: "success", title: `Filtro ${etiquetasExtensiones[id]} activado` });
-  }
-
-  const display = document.getElementById("display-selected");
-  if (extensionesSeleccionadas.length === 0) {
-    display.innerText = "Ninguna categoría seleccionada";
-  } else {
-    display.innerText =
-      "Filtros activos: " + Array.from(categoriasSeleccionadas)
+      display.innerText = 'Filtros activos: ' + Array.from(categoriasSeleccionadas)
         .map((cat) => etiquetasExtensiones[cat])
-        .join(", ");
+        .join(', ');
+    }
+  };
+
+
+  if (button.classList.contains('bg-gray-800')) {
+    categoriasSeleccionadas.add(id_ext_tag);
+
+    button.classList.add(`${bgColor[color_badge]}`, 'text-white', `${borderColor[color_badge]}`);
+    button.classList.remove('bg-gray-800', 'border-gray-600', 'text-white');    
+    
+    extensionesSeleccionadas = [...new Set([...extensionesSeleccionadas, ...lista.map((ext) => ext.toLowerCase())])];
+
+    Toast.fire({ icon: 'success', title: `Filtro ${etiquetasExtensiones[id_ext_tag]} activado` });
+    
+  } else {
+    categoriasSeleccionadas.delete(id_ext_tag);
+    
+    button.classList.remove(`${bgColor[color_badge]}`, 'text-white', `${borderColor[color_badge]}`);
+    button.classList.add('bg-gray-800', 'border-gray-600', 'text-white');
+    stateExtBadge.extraccion = false;
+    extensionesSeleccionadas = extensionesSeleccionadas.filter((ext) => !lista.includes(ext));
+    Toast.fire({ icon: 'info', title: `Filtro ${etiquetasExtensiones[id_ext_tag]} desactivado` });
+
   }
 
-  document.getElementById("custom-extensions").value =
-    extensionesSeleccionadas.join(", ");
+  updateSelectedDisplay();
+  const input = id_section.includes('extraccion') ? 'custom-extensions-extraccion' : 'custom-extensions';
+  document.getElementById(input).value = extensionesSeleccionadas.join(', ');
 }
+
+function limpiaTags (idSection) {
+
+  categoriasSeleccionadas.clear();
+
+  const display = document.querySelector(`#${idSection} .display-selected`);
+  if (!display) return;
+  display.innerText = 'Ninguna categoría seleccionada';
+  
+  const limpiarInput = (idSection) => {
+    const inputs = document.querySelectorAll(`#${idSection} input`);
+    inputs.forEach((input) => {
+      if (input.type === "text"){
+        input.value = '';
+      }else{
+        input.checked = false;
+      }
+    });
+
+  };
+
+  const limpiarButton = (idSection) => {
+    const bgColor = idSection == "view-avanzado" ? "bg-indigo-800" : "bg-purple-800";
+    const borderColor = idSection == "view-avanzado" ? "border-indigo-400" : "border-purple-400";
+    
+    const buttons = document.querySelectorAll(`#${idSection} .ext-badge`);
+    buttons.forEach((btn) => {
+      btn.classList.remove(`${bgColor}`, `${borderColor}`);
+      btn.classList.add('bg-gray-800', 'border-gray-600');
+
+    });
+  };
+
+  switch (idSection) {
+    case "view-avanzado":
+      limpiarInput("view-avanzado");
+      limpiarButton("view-avanzado");
+      break;
+    case "view-extraccion":
+      limpiarButton("view-extraccion");
+      limpiarInput("view-extraccion");
+      break;
+    case "view-multimedia":
+      limpiarInput("view-multimedia");
+      break;
+  }
+
+}
+
 
 function $$ready(fn) {
   if (document.readyState === 'loading') {
@@ -236,7 +298,7 @@ async function ejecutarModulo(tipo) {
 
     config.extensiones = extensiones;
     config.folderName = folderName;
-    config.sortByDate = document.getElementById("sort-by-date").checked;
+    config.sortByDate = document.getElementById("sort-by-date2").checked;
   }
 
   if (tipo === "inteligente") {
@@ -247,6 +309,11 @@ async function ejecutarModulo(tipo) {
 
   if (tipo === "extraccion") {
     // Para orden de extraccion, capturar las opciones de los checkboxes
+    let folderName = document.getElementById("custom-folder-name-ext").value.trim();
+    const extensiones = document.getElementById("custom-extensions-extraccion").value;
+
+    config.extensiones = extensiones;
+    config.folderName = folderName;
     config.create_carpet_type = document.getElementById("create-carpet-type").checked;
     config.delete_carpet = document.getElementById("delete-carpet").checked;
     config.mode_simulation = document.getElementById("mode-simulation").checked;
@@ -255,9 +322,15 @@ async function ejecutarModulo(tipo) {
 
 
   // Modal de carga (Loader)
+  let modalTitle = "Procesando archivos...";
+  let modalText = "Por favor espera un momento.";
+  if (tipo === "limpieza") {
+    modalTitle = "Escaneando duplicados...";
+    modalText = "Analizando archivos y eliminando duplicados. Esto puede tardar.";
+  }
   Swal.fire({
-    title: "Procesando archivos...",
-    text: "Por favor espera un momento.",
+    title: modalTitle,
+    text: modalText,
     allowOutsideClick: false,
     didOpen: () => {
       Swal.showLoading();
@@ -269,8 +342,10 @@ async function ejecutarModulo(tipo) {
   try {
     const response = await pywebview.api.ejecutar_accion(tipo, config);
 
-    // Cerramos el loader y mostramos el éxito
-    Swal.close();
+    if (tipo !== "limpieza") {
+      // Cerramos el loader y mostramos el éxito
+      Swal.close();
+    }
 
     Toast.fire({
       icon: "success",
@@ -286,14 +361,58 @@ async function ejecutarModulo(tipo) {
   }
 }
 
+async function undoAction() {
+  // Modal de carga
+  Swal.fire({
+    title: "Deshaciendo acciones...",
+    text: "Por favor espera un momento.",
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+    background: "#1f2937",
+    color: "#f3f4f6",
+  });
+
+  try {
+    const response = await pywebview.api.ejecutar_accion("undo", {});
+
+    Swal.close();
+
+    Toast.fire({
+      icon: "info",
+      title: response,
+    });
+  } catch (err) {
+    Swal.close();
+    notify(
+      "Error al Deshacer",
+      "No se pudo deshacer la acción.",
+      "error",
+    );
+  }
+}
+
 // Función para cambiar de vista
 function showView(viewId) {
   // Ocultar todas
   document.querySelectorAll(".view").forEach((v) => v.style.display = "none"  );
   
+  switch (viewId) {
+    case "view-avanzado":
+      limpiaTags("view-avanzado");
+      break;
+    case "view-extraccion":
+      limpiaTags("view-extraccion");
+      break;
+    case "view-multimedia":
+      limpiaTags("view-multimedia");
+      break;
+  }
   // Mostrar la elegida
-  // document.getElementById(viewId).classList.remove("hidden");
   document.getElementById(viewId).style.display = "block";
+  
+  currentView = viewId;
 
   // Opcional: Cambiar estilo del botón activo en el sidebar
   // console.log("Navegando a:", viewId);
@@ -375,5 +494,5 @@ function copiarHWID() {
 
 function newTask() {
   document.getElementById('input-ruta').value = '';
-  document.querySelectorAll(".view").forEach((v) => v.classList.add("hidden")  );
+  document.querySelectorAll(".view").forEach((v) => v.style.display = "none"  );
 }

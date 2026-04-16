@@ -2,6 +2,11 @@ import os
 import shutil
 import hashlib
 import time
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.units import inch
+from reportlab.pdfgen import canvas
+from datetime import datetime
+from send2trash import send2trash
 
 
 class FileEngine:
@@ -28,6 +33,7 @@ class FileEngine:
             ],
             "Otros": []
         }
+        self.actions_log = []  # Lista de acciones para deshacer: [(action, src, dest), ...]
         
     def organize(self, source, mode="folders", rename=False):
         """
@@ -102,26 +108,105 @@ class FileEngine:
         return results
     
     def remove_duplicates(self, source_path):
-        """Escanea y elimina duplicados basados en contenido."""
+        """Escanea y elimina duplicados basados en contenido en todo el árbol de carpetas."""
         seen_hashes = {}
         deleted_count = 0
-        
-        # Listar archivos
-        files = [os.path.join(source_path, f) for f in os.listdir(source_path) 
-                if os.path.isfile(os.path.join(source_path, f))]
+        errors = []
+        removed_items = []
 
-        for file_path in files:
-            file_hash = self.get_file_hash(file_path)
-            
-            if file_hash in seen_hashes:
-                # Ya existe un archivo igual, este se borra
-                os.remove(file_path)
-                deleted_count += 1
+        for root, _, files in os.walk(source_path):
+            for file_name in files:
+                file_path = os.path.join(root, file_name)
+                try:
+                    file_hash = self.get_file_hash(file_path)
+                except Exception as e:
+                    errors.append(f"Error leyendo {file_path}: {e}")
+                    continue
+
+                if file_hash in seen_hashes:
+                    try:
+                        send2trash(file_path)
+                        deleted_count += 1
+                        removed_items.append((file_path, seen_hashes[file_hash]))
+                    except Exception as e:
+                        errors.append(f"Error enviando a papelera {file_path}: {e}")
+                else:
+                    seen_hashes[file_hash] = file_path
+
+        pdf_result = self.generar_reporte_pdf_limpieza(source_path, deleted_count, removed_items, errors)
+        summary = f"Limpieza completada. Se enviaron {deleted_count} archivos duplicados a la papelera. {pdf_result}"
+
+        if errors:
+            summary += f" Errores: {len(errors)}"
+
+        return summary
+
+    def generar_reporte_pdf_limpieza(self, ruta, deleted_count, removed_items, errores):
+        try:
+            desktop = os.path.join(os.path.expanduser("~"), "Desktop")
+            reportes_dir = os.path.join(desktop, "reportes file master Pro")
+            os.makedirs(reportes_dir, exist_ok=True)
+
+            nombre_pdf = f"reporte{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+            path_pdf = os.path.join(reportes_dir, nombre_pdf)
+            c = canvas.Canvas(path_pdf, pagesize=letter)
+            width, height = letter
+            y = height - 1*inch
+
+            c.setFont("Helvetica-Bold", 16)
+            c.drawString(1*inch, y, "Create Tech Solutions - File Master Pro")
+            y -= 0.3*inch
+            c.setFont("Helvetica", 12)
+            c.drawString(1*inch, y, f"Reporte de Limpieza de Duplicados - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+            y -= 0.5*inch
+
+            c.setFont("Helvetica-Bold", 10)
+            c.drawString(1*inch, y, f"Directorio Analizado: {ruta}")
+            y -= 0.25*inch
+            c.drawString(1*inch, y, f"Archivos duplicados enviados a papelera: {deleted_count}")
+            y -= 0.4*inch
+
+            def check_space(current_y, needed=0.2*inch):
+                if current_y < 1*inch:
+                    c.showPage()
+                    return height - 1*inch
+                return current_y
+
+            c.setFont("Helvetica-Bold", 12)
+            c.drawString(1*inch, y, "Archivos Enviados a Papelera:")
+            y -= 0.25*inch
+            c.setFont("Helvetica", 9)
+
+            if removed_items:
+                for removed, original in removed_items:
+                    y = check_space(y)
+                    removed_text = (removed[:70] + '..') if len(removed) > 70 else removed
+                    original_text = (original[:70] + '..') if len(original) > 70 else original
+                    c.drawString(1*inch, y, f"{removed_text}")
+                    y -= 0.15*inch
+                    c.drawString(1.1*inch, y, f"Duplicado de: {original_text}")
+                    y -= 0.25*inch
             else:
-                # Es la primera vez que vemos este contenido
-                seen_hashes[file_hash] = file_path
-                
-        return f"Limpieza completada. Se eliminaron {deleted_count} archivos duplicados."
+                c.drawString(1*inch, y, "No se detectaron archivos duplicados.")
+                y -= 0.25*inch
+
+            if errores:
+                y = check_space(y, 0.4*inch)
+                c.setFillColorRGB(1, 0, 0)
+                c.setFont("Helvetica-Bold", 12)
+                c.drawString(1*inch, y, "Errores Encontrados:")
+                y -= 0.25*inch
+                c.setFont("Helvetica", 9)
+                for err in errores:
+                    y = check_space(y)
+                    c.drawString(1*inch, y, f"- {err}")
+                    y -= 0.15*inch
+                c.setFillColorRGB(0, 0, 0)
+
+            c.save()
+            return f"Reporte generado: {path_pdf}"
+        except Exception as e:
+            return f"Error generando PDF: {e}"
     
     def organize_inteligente(self, source_path, include_subfolders=True, sort_by_date=True):
         """
@@ -218,6 +303,229 @@ class FileEngine:
             return f"No se encontraron archivos con las extensiones: {', '.join(extensions)}"
             
         return f"¡Éxito! Se movieron {count} archivos a la carpeta '{folder_name}'."
+
+    def extract_selective(self, source_path, extensions, create_subfolders=True, delete_source_folders=False, simulation_mode=False, sort_by_date=False):
+        """
+        Extrae archivos con extensiones específicas de subcarpetas a la carpeta principal.
+        Opciones:
+        - create_subfolders: Crear subcarpetas por tipo de archivo
+        - delete_source_folders: Eliminar carpetas de origen después de extraer
+        - simulation_mode: Solo simular, no mover nada
+        - sort_by_date: Ordenar archivos por fecha (no implementado aún)
+        """
+        import os
+        import shutil
+        from datetime import datetime
+
+        archivos_procesados = []
+        carpetas_eliminadas = []
+        errores = []
+        carpetas_origen_potenciales = set()
+
+        # Procesar extensiones
+        exts_buscadas = [e.strip().lower() for e in extensions.split(',') if e.strip()]
+
+        # Paso 1: Conteo de archivos para progreso (simulado)
+        total_archivos = 0
+        for root_dir, dirs, files in os.walk(source_path):
+            if os.path.abspath(root_dir) == os.path.abspath(source_path): continue
+            for file in files:
+                _, ext = os.path.splitext(file)
+                if ext.lower() in exts_buscadas:
+                    total_archivos += 1
+
+        if total_archivos == 0:
+            return "No se encontraron archivos con las extensiones especificadas en subcarpetas."
+
+        # Paso 2: Procesar archivos
+        procesados_count = 0
+        files_to_process = []
+        for root_dir, dirs, files in os.walk(source_path):
+            if os.path.abspath(root_dir) == os.path.abspath(source_path): continue
+            for file in files:
+                _, ext = os.path.splitext(file)
+                if ext.lower() in exts_buscadas:
+                    path_origen = os.path.join(root_dir, file)
+                    mtime = os.path.getmtime(path_origen)
+                    files_to_process.append((path_origen, file, ext.lower(), root_dir, mtime))
+
+        # Ordenar por fecha si se solicita
+        if sort_by_date:
+            files_to_process.sort(key=lambda x: x[4])  # sort by mtime
+
+        for path_origen, file, ext_lc, root_dir, mtime in files_to_process:
+            # Definir destino
+            destino_final = source_path
+            if create_subfolders:
+                category = "Otros"
+                for cat, exts in self.categories.items():
+                    if ext_lc in exts:
+                        category = cat
+                        break
+                destino_final = os.path.join(source_path, category)
+            
+            if sort_by_date:
+                # Crear subcarpetas por año/mes
+                fecha = time.localtime(mtime)
+                year = str(fecha.tm_year)
+                month = f"{fecha.tm_mon:02d}"  # Mes con cero
+                destino_final = os.path.join(destino_final, year, month)
+
+            path_destino = os.path.join(destino_final, file)
+
+            if os.path.exists(path_destino):
+                archivos_procesados.append((file, "Omitido (Ya existe)", path_destino))
+                continue
+
+            # MOVER / SIMULAR
+            try:
+                if not simulation_mode:
+                    os.makedirs(destino_final, exist_ok=True)
+                    shutil.move(path_origen, path_destino)
+                    self.actions_log.append(("move", path_origen, path_destino))  # Registrar para deshacer
+
+                accion = "Simulado: Mover" if simulation_mode else "Movido"
+                archivos_procesados.append((file, accion, path_destino))
+                carpetas_origen_potenciales.add(root_dir)
+                procesados_count += 1
+            except Exception as e:
+                errores.append(f"Error moviendo {file}: {e}")
+                archivos_procesados.append((file, "Error", str(e)))
+
+        # Paso 3: Limpieza de carpetas
+        if delete_source_folders and carpetas_origen_potenciales:
+            for carpeta in sorted(list(carpetas_origen_potenciales), key=len, reverse=True):
+                if os.path.exists(carpeta):
+                    try:
+                        if not simulation_mode:
+                            send2trash(carpeta)
+                        accion = "Simulado: Enviar carpeta a papelera" if simulation_mode else "Enviado a papelera"
+                        carpetas_eliminadas.append((os.path.basename(carpeta), accion))
+                    except Exception as e:
+                        errores.append(f"Error enviando carpeta a papelera {os.path.basename(carpeta)}: {e}")
+                        carpetas_eliminadas.append((os.path.basename(carpeta), f"Error: {e}"))
+
+        # Generar PDF obligatorio
+        pdf_result = self.generar_reporte_pdf(source_path, simulation_mode, archivos_procesados, carpetas_eliminadas, errores, sort_by_date, delete_source_folders)
+
+        reporte = f"Extracción completada. {procesados_count} archivos procesados. {pdf_result}"
+        if errores:
+            reporte += f" Errores: {len(errores)}"
+        if carpetas_eliminadas:
+            reporte += f" Carpetas eliminadas: {len(carpetas_eliminadas)}"
+
+        return reporte
+
+    def undo_last_action(self):
+        """
+        Deshace la última acción realizada.
+        """
+        if not self.actions_log:
+            return "No hay acciones para deshacer."
+
+        # Revertir en orden inverso
+        reversed_actions = self.actions_log[::-1]
+        undone_count = 0
+        for action, src, dest in reversed_actions:
+            try:
+                if action == "move":
+                    shutil.move(dest, src)
+                elif action == "delete_folder":
+                    # No podemos recrear carpetas borradas fácilmente, así que omitir
+                    pass
+                undone_count += 1
+            except Exception as e:
+                return f"Error deshaciendo: {e}"
+
+        self.actions_log = []  # Limpiar log después de deshacer
+        return f"Se deshicieron {undone_count} acciones."
+
+    def generar_reporte_pdf(self, ruta, modo_sim, archivos, carpetas, errores, sort_by_date, delete_source_folders):
+        """
+        Genera un reporte PDF con buen diseño.
+        """
+        try:
+            # Crear carpeta en escritorio
+            desktop = os.path.join(os.path.expanduser("~"), "Desktop")
+            reportes_dir = os.path.join(desktop, "reportes file master Pro")
+            os.makedirs(reportes_dir, exist_ok=True)
+
+            nombre_pdf = f"reporte{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+            path_pdf = os.path.join(reportes_dir, nombre_pdf)
+            c = canvas.Canvas(path_pdf, pagesize=letter)
+            width, height = letter
+            y = height - 1*inch
+
+            # Encabezado
+            c.setFont("Helvetica-Bold", 16)
+            c.drawString(1*inch, y, "Create Tech Solutions - File Master Pro")
+            y -= 0.3*inch
+            c.setFont("Helvetica", 12)
+            c.drawString(1*inch, y, f"Reporte de Extracción Selectiva - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+            y -= 0.5*inch
+
+            # Detalles
+            c.setFont("Helvetica-Bold", 10)
+            c.drawString(1*inch, y, f"Directorio Base: {ruta}")
+            y -= 0.2*inch
+            c.drawString(1*inch, y, f"Modo Simulación: {'SÍ' if modo_sim else 'NO'}")
+            y -= 0.2*inch
+            c.drawString(1*inch, y, f"Ordenar por Fecha: {'SÍ' if sort_by_date else 'NO'}")
+            y -= 0.2*inch
+            c.drawString(1*inch, y, f"Eliminar Carpetas Origen: {'SÍ' if delete_source_folders else 'NO'}")
+            y -= 0.4*inch
+
+            def check_space(current_y, needed=0.2*inch):
+                if current_y < 1*inch:
+                    c.showPage()
+                    return height - 1*inch
+                return current_y
+
+            # Sección Archivos
+            c.setFont("Helvetica-Bold", 12)
+            c.drawString(1*inch, y, "Archivos Procesados:")
+            y -= 0.25*inch
+            c.setFont("Helvetica", 9)
+
+            for file, accion, dest in archivos:
+                y = check_space(y)
+                file_txt = (file[:40] + '..') if len(file) > 40 else file
+                dest_txt = (dest[:50] + '..') if len(dest) > 50 else dest
+                c.drawString(1*inch, y, f"[{accion}] {file_txt} -> {dest_txt}")
+                y -= 0.15*inch
+
+            y -= 0.3*inch
+            y = check_space(y)
+
+            # Sección Carpetas
+            if carpetas:
+                c.setFont("Helvetica-Bold", 12)
+                c.drawString(1*inch, y, "Limpieza de Carpetas:")
+                y -= 0.25*inch
+                c.setFont("Helvetica", 9)
+                for carpeta, accion in carpetas:
+                    y = check_space(y)
+                    c.drawString(1*inch, y, f"[{accion}] {carpeta}")
+                    y -= 0.15*inch
+                y -= 0.3*inch
+
+            # Sección Errores
+            y = check_space(y, 0.5*inch)
+            if errores:
+                c.setFillColorRGB(1, 0, 0)  # Rojo
+                c.setFont("Helvetica-Bold", 12)
+                c.drawString(1*inch, y, "Errores Encontrados:")
+                y -= 0.25*inch
+                c.setFont("Helvetica", 9)
+                for err in errores:
+                    y = check_space(y)
+                    c.drawString(1*inch, y, f"!! {err}")
+                    y -= 0.15*inch
+
+            c.save()
+            return f"Reporte generado: {path_pdf}"
+        except Exception as e:
+            return f"Error generando PDF: {e}"
     
     
     
