@@ -129,11 +129,11 @@ function selectBadgeExtraccion (id_section, id) {
   };
 
 
-  if (button.classList.contains('bg-gray-800')) {
+  if (button.classList.contains('btn-outline-secondary')) {
     categoriasSeleccionadas.add(id_ext_tag);
 
-    button.classList.add(`${bgColor[color_badge]}`, 'text-white', `${borderColor[color_badge]}`);
-    button.classList.remove('bg-gray-800', 'border-gray-600', 'text-white');    
+    button.classList.add(`active-badge`);
+    button.classList.remove('btn-outline-secondary');    
     
     extensionesSeleccionadas = [...new Set([...extensionesSeleccionadas, ...lista.map((ext) => ext.toLowerCase())])];
 
@@ -142,8 +142,8 @@ function selectBadgeExtraccion (id_section, id) {
   } else {
     categoriasSeleccionadas.delete(id_ext_tag);
     
-    button.classList.remove(`${bgColor[color_badge]}`, 'text-white', `${borderColor[color_badge]}`);
-    button.classList.add('bg-gray-800', 'border-gray-600', 'text-white');
+    button.classList.remove(`active-badge`);
+    button.classList.add('btn-outline-secondary');
     stateExtBadge.extraccion = false;
     extensionesSeleccionadas = extensionesSeleccionadas.filter((ext) => !lista.includes(ext));
     Toast.fire({ icon: 'info', title: `Filtro ${etiquetasExtensiones[id_ext_tag]} desactivado` });
@@ -428,18 +428,18 @@ window.addEventListener("pywebviewready", async function () {
     const estado = await pywebview.api.verificar_activacion();
     if (estado.activado) {
       // Mostrar dashboard
-      document.getElementById("license-overlay").classList.add("hidden");
+      document.getElementById("license-overlay").classList.add("d-none");
       console.log("Software activado - Dashboard disponible");
     } else {
       // Mostrar overlay de activación
-      document.getElementById("license-overlay").classList.remove("hidden");
+      document.getElementById("license-overlay").classList.remove("d-none");
       document.getElementById("hwid-display").value = estado.hwid;
       console.log("Software no activado - Mostrando overlay");
     }
   } catch (error) {
     console.error("Error verificando activación:", error);
     // En caso de error, mostrar overlay por seguridad
-    document.getElementById("license-overlay").classList.remove("hidden");
+    document.getElementById("license-overlay").classList.remove("d-none");
   }
 });
 
