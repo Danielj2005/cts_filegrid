@@ -103,7 +103,7 @@
 
                     <div class="col-12 col-md-3 mb-3 align-items-center d-flex justify-content-center overflow-hidden text-center">
                     
-                        <button onclick="showView('dalete')" 
+                        <button onclick="showView('delete')" 
                                 class="btn btn-outline-danger d-flex align-items-center justify-content-center text-center p-3 rounded-5">
                             <i class="me-2 bi bi-trash"></i>
                             <span class="font-medium fw-bold">Eliminación selectiva</span>
@@ -149,12 +149,12 @@
                         <p class="mb-3 fs-5">Escanea carpetas y subcarpetas, organizando los archivos dentro de cada una por tipo y fecha de creación/modificación. Mantiene la jerarquía de carpetas intacta.</p>
     
                         <div class="d-flex gap-2 align-items-center mb-4">
-                            <input class="bg-transparent form-check-input fs-5" type="checkbox" checked="true" value="" id="inteligente-include-subfolders">
+                            <input class="cleanInput bg-transparent form-check-input fs-5" type="checkbox" checked="true" value="" id="inteligente-include-subfolders">
                             <label class="form-check-label" for="inteligente-include-subfolders">Incluir subcarpetas</label>
                         </div>
                         
                         <div class="d-flex gap-2 align-items-center mb-4">
-                            <input class="bg-transparent form-check-input fs-5" type="checkbox" value="" id="inteligente-sort-by-date">
+                            <input class="cleanInput bg-transparent form-check-input fs-5" type="checkbox" value="" id="inteligente-sort-by-date">
                             <label class="form-check-label" for="inteligente-sort-by-date">Ordenar por fecha (Año/Mes)</label>
                         </div>
                     </div>
@@ -218,17 +218,19 @@
                             Programas
                     </button>
                 </div>
+
                 <div style="border: 1px dashed #ccc;" class="align-items-center border-2 border-gray-700 d-flex mb-6 p-3 rounded-4 text-center">
                     <p class="text-white-subtle">Los archivos irán a la papelera. Asegúrate de tener espacio disponible: en Windows, si la papelera supera su límite (por defecto ~15 GB), los archivos se borrarán de forma permanente en lugar de almacenarse.</p>
                 </div>
+
                 <div class="mb-4">
                     <div class="d-flex gap-2 align-items-center mb-2">
-                        <input class="bg-transparent form-check-input fs-5" type="checkbox" id="eliminacion-include-subfolders">
+                        <input class="cleanInput bg-transparent form-check-input fs-5" type="checkbox" id="eliminacion-include-subfolders">
                         <label class="form-check-label" for="eliminacion-include-subfolders">Incluir subcarpetas</label>
                     </div>
 
                     <div class="d-flex gap-1 align-items-center mb-2">
-                        <input class="bg-transparent form-check-input fs-5" type="checkbox" id="eliminar-carpet">
+                        <input class="cleanInput bg-transparent form-check-input fs-5" type="checkbox" id="eliminar-carpet">
                         <label class="form-check-label" for="eliminar-carpet">ELIMINAR carpetas de origen (usar con precaución)</label>
                     </div>
                 </div>
@@ -253,25 +255,30 @@
                             <img src="./assets/img/file.svg" alt="Documentos Logo" class="w-6">
                             Documentos
                     </button>
+
                     <button id="extraccion-imgs" onclick="selectBadges('extract','imgs')" class="btn btn-outline-secondary border border-gray-700 ext-badge d-flex gap-2 align-items-center px-3 py-1 rounded-5 transition-all">
                         <img src="./assets/img/image.svg" alt="Imágenes Logo" class="w-6">
                         Imágenes
                     </button>
+
                     <button id="extraccion-videos" onclick="selectBadges('extract','videos')" 
                         class="btn btn-outline-secondary border border-gray-700 ext-badge d-flex gap-2 align-items-center px-3 py-1 rounded-5 transition-all">
                             <img src="./assets/img/clapperboard.svg" alt="Videos Logo" class="w-6">
                             Videos
                     </button>
+
                     <button id="extraccion-audio" onclick="selectBadges('extract','audio')" 
                         class="btn btn-outline-secondary border border-gray-700 ext-badge d-flex gap-2 align-items-center px-3 py-1 rounded-5 ">
                             <img src="./assets/img/headphones.svg" alt="Audio Logo" class="w-6">
                             Audio
                     </button>
+
                     <button id="extraccion-compressed" onclick="selectBadges('extract','compressed')" 
                         class="btn btn-outline-secondary border border-gray-700 ext-badge d-flex gap-2 align-items-center px-3 py-1 rounded-5 ">
                             <img src="./assets/img/file-archive.svg" alt="Comprimidos Logo" class="w-6">
                             Comprimidos
                     </button>
+
                     <button id="extraccion-prog" onclick="selectBadges('extract','prog')" 
                         class="btn btn-outline-secondary border border-gray-700 ext-badge d-flex gap-2 align-items-center px-3 py-1 rounded-5 ">
                             <img src="./assets/img/settings.svg" alt="Programas Logo" class="w-6">
@@ -304,11 +311,11 @@
                 <div class="row align-items-center justify-content-between mb-2">
                     <div class="col-12 col-md-9 mb-4">
                         <label class="text-white-subtle uppercase mb-2 d-block">Nombre de carpeta destino</label>
-                        <input id="custom-folder-name-ext" type="text" placeholder="Ej. OrdenPersonalizada" class="form-control p-2 rounded border border-gray-700 outline-none" />
+                        <input id="custom-folder-name-ext" type="text" placeholder="Ej. OrdenPersonalizada" class="cleanInput form-control p-2 rounded border border-gray-700 outline-none" />
                     </div>
                     <div class="col-12 col-md-3 text-center mb-4">
                         <button onclick="ejecutarModulo('extraccion')" class="mb-4 btn btn-purple text-white p-3 rounded-5 fw-bold bg-opacity-50">Ejecutar Extracción</button>
-                        <input type="hidden" id="custom-extensions-extraccion">
+                        <input type="hidden" id="custom-extensions-extraccion" class="cleanInput ">
                     </div>
                 </div>
                 <div class="display-selected text-emerald-400">Ninguna categoría seleccionada</div>
@@ -357,7 +364,7 @@
                 </div>
 
                 <div class="d-flex gap-2 align-items-center mb-4">
-                    <input class="bg-transparent form-check-input fs-5" type="checkbox" value="" id="sort-by-date2">
+                    <input class="cleanInput bg-transparent form-check-input fs-5" type="checkbox" value="" id="sort-by-date2">
                     <label class="form-check-label" for="sort-by-date2">Ordenar por fecha (Año/Mes)</label>
                 </div>
                 <button onclick="ejecutarModulo('avanzado')" class="w-100 col-12 btn btn-indigo mb-4 p-3 rounded-5 fw-bold bg-opacity-75">Ejecutar Avanzado</button>

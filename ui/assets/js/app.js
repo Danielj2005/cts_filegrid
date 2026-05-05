@@ -77,13 +77,6 @@ const ext_tag = {
   prog: ['.exe', '.msi', '.bat', '.apk', '.jar'],
 };
 
-const stateExtBadge = {
-  docs: false,  imgs: false,
-  videos: false,  audio: false,
-  compressed: false,  prog: false,
-};
-
-
 
 const idSections = {
   delete: "view-eliminacion",
@@ -95,9 +88,9 @@ const idSections = {
 };
 
 const idSectionsContainerCategories = {
-  delete: `${idSections.delete} .display-selected`,
-  extract: `${idSections.extract} .display-selected`,
-  advanced: `${idSections.advanced} .display-selected`,
+  delete: `#${idSections.delete} .display-selected`,
+  extract: `#${idSections.extract} .display-selected`,
+  advanced: `#${idSections.advanced} .display-selected`,
   multimedia: ""
 };
 
@@ -118,8 +111,8 @@ function selectBadges (action, id) {
 
   const button = document.getElementById(idBadges[action] + id);
   const lista = ext_tag[id] || [];
-
-  const updateSelectedDisplay = () => {
+  
+  const updateSelectedDisplay = (action) => {
     const display = document.querySelector(idSectionsContainerCategories[action]);
     if (!display) return;
     if (extensionesSeleccionadas.length === 0) {
@@ -136,10 +129,10 @@ function selectBadges (action, id) {
     categoriasSeleccionadas.add(id);
 
     button.classList.add(`active-badge`);
-    button.classList.remove('btn-outline-secondary');    
-    
-    extensionesSeleccionadas = [...new Set([...extensionesSeleccionadas, ...lista.map((ext) => ext.toLowerCase())])];
+    button.classList.remove('btn-outline-secondary');
 
+    extensionesSeleccionadas = [...new Set([...extensionesSeleccionadas, ...lista.map((ext) => ext.toLowerCase())])];
+    
     Toast.fire({ icon: 'success', title: `Filtro ${etiquetasExtensiones[id]} activado` });
     
   } else {
@@ -157,23 +150,18 @@ function selectBadges (action, id) {
 }
 
 function limpiaTags (action) {
-  
-  const idinputs = {
-    delete: `${idSections.delete} input`,
-    extract: `${idSections.extract} input`,
-    advanced: `${idSections.advanced} input`,
-    multimedia: `${idSections.multimedia} input`,
-  };
-
   categoriasSeleccionadas.clear();
-
-  const display = document.querySelector(idSectionsContainerCategories[action]);
+  const display = document.querySelectorAll('div .display-selected');
   if (!display) return;
-  display.innerText = 'Ninguna categoría seleccionada';
-  
-  const limpiarInput = (section) => {
-    const inputs = document.querySelectorAll(idinputs[section]);
-    inputs.forEach((input) => {
+
+  display.forEach((d) => {
+    d.innerText = 'Ninguna categoría seleccionada';
+  });
+
+  const limpiarInput = () => {
+    const inputs1 = document.querySelectorAll('div .cleanInput');
+
+    inputs1.forEach((input) => {
       if (input.type === "text"){
         input.value = '';
       }else{
@@ -183,33 +171,20 @@ function limpiaTags (action) {
   };
 
   const limpiarButton = (btn) => {
+    const buttons = document.querySelectorAll('div .ext-badge');
 
-    const buttons = document.querySelectorAll(`#${idSections[btn]} .ext-badge`);
     buttons.forEach((btn) => {
       btn.classList.remove(`active-badge`);
       btn.classList.add('btn-outline-secondary');
     });
   };
-
-  const viewClean = {
-    delete: () => {
-      limpiarInput("delete");
-      limpiarButton("delete");
-    },
-    extract: () => {
-      limpiarInput("extract");
-      limpiarButton("extract");
-    },
-    advanced: () => {
-      limpiarInput("advanced");
-      limpiarButton("advanced");
-    },
-    multimedia: () => {
-      limpiarInput("multimedia");
-    },
-  };
-
-  viewClean[action];
+  
+  if (action) {
+    limpiarInput();
+    limpiarButton();
+  }else{
+    limpiarInput();
+  }
 }
 
 
@@ -407,16 +382,12 @@ function showView(viewId) {
   // Ocultar todas
   document.querySelectorAll(".view").forEach((v) => v.style.display = "none" );
   
-  const viewClean = {
-    delete: () => { limpiaTags("delete"); },
-    extract: () => { limpiarInput("extract"); },
-    advanced: () => { limpiarInput("advanced"); },
-    multimedia: () => { limpiaTags("multimedia"); },
-    dash: "",
-    clean: "",
-  };
+  if (viewId !== "dash" || viewId !== "clean" || viweId !== "multimedia") {
+    limpiaTags(true);
 
-  viewClean[viewId];
+  }else{
+    limpiaTags(false);
+  }
 
   // Mostrar la elegida
   document.getElementById(idSections[viewId]).style.display = "block";
