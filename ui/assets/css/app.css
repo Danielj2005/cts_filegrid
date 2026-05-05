@@ -1,3 +1,34 @@
+/* 
+// scss-docs-start color-variables
+$blue:    #0d6efd !default;
+$indigo:  #6610f2 !default;
+$purple:  #6f42c1 !default;
+$pink:    #d63384 !default;
+$red:     #dc3545 !default;
+$orange:  #fd7e14 !default;
+$yellow:  #ffc107 !default;
+$green:   #198754 !default;
+$teal:    #20c997 !default;
+$cyan:    #0dcaf0 !default;
+// scss-docs-end color-variables
+
+// scss-docs-start colors-map
+$colors: (
+  "blue":       $blue,
+  "indigo":     $indigo,
+  "purple":     $purple,
+  "pink":       $pink,
+  "red":        $red,
+  "orange":     $orange,
+  "yellow":     $yellow,
+  "green":      $green,
+  "teal":       $teal,
+  "cyan":       $cyan,
+  "black":      $black,
+  "white":      $white,
+  "gray":       $gray-600,
+  "gray-dark":  $gray-800
+) !default; */
 
 :root {
     color-scheme: dark;
@@ -137,34 +168,6 @@
     --bs-form-invalid-color: #dc3545;
     --bs-form-invalid-border-color: #dc3545;
 
-    --bs-breakpoint-xs: 0;
-    --bs-breakpoint-sm: 576px;
-    --bs-breakpoint-md: 768px;
-    --bs-breakpoint-lg: 992px;
-    --bs-breakpoint-xl: 1200px;
-    --bs-breakpoint-xxl: 1400px;
-    
-
-    --tw-border-spacing-x: 0;
-    --tw-border-spacing-y: 0;
-    --tw-translate-x: 0;
-    --tw-translate-y: 0;
-    --tw-rotate: 0;
-    --tw-skew-x: 0;
-    --tw-skew-y: 0;
-    --tw-scale-x: 1;
-    --tw-scale-y: 1;
-    --tw-scroll-snap-strictness: proximity;
-    --tw-ring-offset-width: 0px;
-    --tw-ring-offset-color: #fff;
-    --tw-ring-color: rgb(59 130 246 / 0.5);
-    --tw-ring-offset-shadow: 0 0 #0000;
-    --tw-ring-shadow: 0 0 #0000;
-    --tw-shadow: 0 0 #0000;
-    --tw-shadow-colored: 0 0 #0000;
-    --tw-content: '';
-    --tw-text-opacity: 1;
-
 }
 
 * {
@@ -230,7 +233,7 @@ p{
 }
 
 .btn-purple:hover{
-    color: var(--color-purple);
+    color: #fff !important;
     --bs-btn-hover-color: #fff;
     --bs-btn-hover-bg: var(--color-purple);
     --bs-btn-focus-shadow-rgb: 220, 53, 69;
@@ -253,7 +256,7 @@ p{
 }
 
 .btn-outline-purple:hover{
-    color: #fff;
+    color:  #fff !important;
     background: #73479e !important;
     border-color: var(--color-purple);
 }
@@ -350,10 +353,15 @@ p{
 
 }
 .section-limpieza:hover{
-    border-color: #f87171 !important;
+    border-color: #0dcaf0 !important;
     transition: all;
 
 }
+.section-eliminacion:hover{
+    border-color: #dc3545 !important;
+    transition: all;
+}
+
 .section-avanzado:hover{
     border-color: #3f3abe !important;
     transition: all;

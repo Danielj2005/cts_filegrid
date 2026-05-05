@@ -85,39 +85,42 @@ const stateExtBadge = {
 
 
 
-function selectBadgeExtraccion (id_section, id) {
-  const button = document.getElementById(id);
+const idSections = {
+  delete: "view-eliminacion",
+  extract: "view-extraccion",
+  advanced: "view-avanzado",
+  multimedia: "view-multimedia",
+  dash: "view-dashboard",
+  clean: "view-limpieza"
+};
 
-  let id_ext_tag;
-  let color_badge;
+const idSectionsContainerCategories = {
+  delete: `${idSections.delete} .display-selected`,
+  extract: `${idSections.extract} .display-selected`,
+  advanced: `${idSections.advanced} .display-selected`,
+  multimedia: ""
+};
 
-  if (id.includes('extraccion')) {
+const idBadges = {
+  delete: "eliminacion-",
+  extract: "extraccion-",
+  advanced: "extension-",
+  multimedia: ""
+};
+const idContainerExtensions = {
+  extract: "custom-extensions-extraccion",
+  advanced: "custom-extensions",
+  delete: "custom-eliminacion",
+  multimedia: ""
+};
 
-    id_ext_tag = id.replace('extraccion-', '');
-    color_badge = "extraction";
+function selectBadges (action, id) {
 
-  }else if (id.includes('extension')) {
+  const button = document.getElementById(idBadges[action] + id);
+  const lista = ext_tag[id] || [];
 
-    id_ext_tag = id.replace('extension-', '');
-    color_badge = "extension";
-
-  }else{  id_ext_tag = id; }
-
-  const lista = ext_tag[id_ext_tag] || [];
-
-  const bgColor = {
-    extraction: "bg-purple-800",
-    extension: "bg-indigo-800"
-  };
-
-  const borderColor = {
-    extraction: "border-purple-400",
-    extension: "border-indigo-400"
-  };
-
-  
   const updateSelectedDisplay = () => {
-    const display = document.querySelector(`#${id_section} .display-selected`);
+    const display = document.querySelector(idSectionsContainerCategories[action]);
     if (!display) return;
     if (extensionesSeleccionadas.length === 0) {
       display.innerText = 'Ninguna categoría seleccionada';
@@ -130,41 +133,46 @@ function selectBadgeExtraccion (id_section, id) {
 
 
   if (button.classList.contains('btn-outline-secondary')) {
-    categoriasSeleccionadas.add(id_ext_tag);
+    categoriasSeleccionadas.add(id);
 
     button.classList.add(`active-badge`);
     button.classList.remove('btn-outline-secondary');    
     
     extensionesSeleccionadas = [...new Set([...extensionesSeleccionadas, ...lista.map((ext) => ext.toLowerCase())])];
 
-    Toast.fire({ icon: 'success', title: `Filtro ${etiquetasExtensiones[id_ext_tag]} activado` });
+    Toast.fire({ icon: 'success', title: `Filtro ${etiquetasExtensiones[id]} activado` });
     
   } else {
-    categoriasSeleccionadas.delete(id_ext_tag);
+    categoriasSeleccionadas.delete(id);
     
     button.classList.remove(`active-badge`);
     button.classList.add('btn-outline-secondary');
-    stateExtBadge.extraccion = false;
     extensionesSeleccionadas = extensionesSeleccionadas.filter((ext) => !lista.includes(ext));
-    Toast.fire({ icon: 'info', title: `Filtro ${etiquetasExtensiones[id_ext_tag]} desactivado` });
+    Toast.fire({ icon: 'info', title: `Filtro ${etiquetasExtensiones[id]} desactivado` });
 
   }
 
   updateSelectedDisplay();
-  const input = id_section.includes('extraccion') ? 'custom-extensions-extraccion' : 'custom-extensions';
-  document.getElementById(input).value = extensionesSeleccionadas.join(', ');
+  document.getElementById(idContainerExtensions[action]).value = extensionesSeleccionadas.join(', ');
 }
 
-function limpiaTags (idSection) {
+function limpiaTags (action) {
+  
+  const idinputs = {
+    delete: `${idSections.delete} input`,
+    extract: `${idSections.extract} input`,
+    advanced: `${idSections.advanced} input`,
+    multimedia: `${idSections.multimedia} input`,
+  };
 
   categoriasSeleccionadas.clear();
 
-  const display = document.querySelector(`#${idSection} .display-selected`);
+  const display = document.querySelector(idSectionsContainerCategories[action]);
   if (!display) return;
   display.innerText = 'Ninguna categoría seleccionada';
   
-  const limpiarInput = (idSection) => {
-    const inputs = document.querySelectorAll(`#${idSection} input`);
+  const limpiarInput = (section) => {
+    const inputs = document.querySelectorAll(idinputs[section]);
     inputs.forEach((input) => {
       if (input.type === "text"){
         input.value = '';
@@ -172,35 +180,36 @@ function limpiaTags (idSection) {
         input.checked = false;
       }
     });
-
   };
 
-  const limpiarButton = (idSection) => {
-    const bgColor = idSection == "view-avanzado" ? "bg-indigo-800" : "bg-purple-800";
-    const borderColor = idSection == "view-avanzado" ? "border-indigo-400" : "border-purple-400";
-    
-    const buttons = document.querySelectorAll(`#${idSection} .ext-badge`);
-    buttons.forEach((btn) => {
-      btn.classList.remove(`${bgColor}`, `${borderColor}`);
-      btn.classList.add('bg-gray-800', 'border-gray-600');
+  const limpiarButton = (btn) => {
 
+    const buttons = document.querySelectorAll(`#${idSections[btn]} .ext-badge`);
+    buttons.forEach((btn) => {
+      btn.classList.remove(`active-badge`);
+      btn.classList.add('btn-outline-secondary');
     });
   };
 
-  switch (idSection) {
-    case "view-avanzado":
-      limpiarInput("view-avanzado");
-      limpiarButton("view-avanzado");
-      break;
-    case "view-extraccion":
-      limpiarButton("view-extraccion");
-      limpiarInput("view-extraccion");
-      break;
-    case "view-multimedia":
-      limpiarInput("view-multimedia");
-      break;
-  }
+  const viewClean = {
+    delete: () => {
+      limpiarInput("delete");
+      limpiarButton("delete");
+    },
+    extract: () => {
+      limpiarInput("extract");
+      limpiarButton("extract");
+    },
+    advanced: () => {
+      limpiarInput("advanced");
+      limpiarButton("advanced");
+    },
+    multimedia: () => {
+      limpiarInput("multimedia");
+    },
+  };
 
+  viewClean[action];
 }
 
 
@@ -396,23 +405,23 @@ async function undoAction() {
 // Función para cambiar de vista
 function showView(viewId) {
   // Ocultar todas
-  document.querySelectorAll(".view").forEach((v) => v.style.display = "none"  );
+  document.querySelectorAll(".view").forEach((v) => v.style.display = "none" );
   
-  switch (viewId) {
-    case "view-avanzado":
-      limpiaTags("view-avanzado");
-      break;
-    case "view-extraccion":
-      limpiaTags("view-extraccion");
-      break;
-    case "view-multimedia":
-      limpiaTags("view-multimedia");
-      break;
-  }
+  const viewClean = {
+    delete: () => { limpiaTags("delete"); },
+    extract: () => { limpiarInput("extract"); },
+    advanced: () => { limpiarInput("advanced"); },
+    multimedia: () => { limpiaTags("multimedia"); },
+    dash: "",
+    clean: "",
+  };
+
+  viewClean[viewId];
+
   // Mostrar la elegida
-  document.getElementById(viewId).style.display = "block";
+  document.getElementById(idSections[viewId]).style.display = "block";
   
-  currentView = viewId;
+  currentView = idSections[viewId];
 
   // Opcional: Cambiar estilo del botón activo en el sidebar
   // console.log("Navegando a:", viewId);
