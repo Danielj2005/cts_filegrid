@@ -416,6 +416,149 @@ class FileEngine:
 
         return reporte
 
+    def delete_selective(self, source_path, extensions, include_subfolders=True, delete_source_folders=False):
+        """
+        Elimina archivos que coincidan con las extensiones seleccionadas.
+        Envía los archivos a la papelera y opcionalmente elimina carpetas vacías.
+        """
+        exts_buscadas = [e.strip().lower() for e in extensions.split(',') if e.strip()]
+        if not exts_buscadas:
+            return "Error: No se especificaron extensiones para la eliminación selectiva."
+
+        archivos_eliminados = []
+        errores = []
+        root_abs = os.path.abspath(source_path)
+
+        for root, _, files in os.walk(source_path):
+            if not include_subfolders and os.path.abspath(root) != root_abs:
+                continue
+
+            for filename in files:
+                _, ext = os.path.splitext(filename)
+                if ext.lower() in exts_buscadas:
+                    file_path = os.path.join(root, filename)
+                    try:
+                        send2trash(file_path)
+                        archivos_eliminados.append(file_path)
+                    except Exception as e:
+                        errores.append(f"Error enviando a papelera {file_path}: {e}")
+
+        carpetas_eliminadas = []
+        if delete_source_folders:
+            for root, dirs, files in os.walk(source_path, topdown=False):
+                if os.path.abspath(root) == root_abs:
+                    continue
+                try:
+                    if not os.listdir(root):
+                        send2trash(root)
+                        carpetas_eliminadas.append(root)
+                except Exception as e:
+                    errores.append(f"Error enviando carpeta a papelera {root}: {e}")
+
+        if not archivos_eliminados:
+            return "No se encontraron archivos con las extensiones seleccionadas para eliminar."
+
+        pdf_result = self.generar_reporte_pdf_eliminacion(
+            source_path,
+            archivos_eliminados,
+            carpetas_eliminadas,
+            errores,
+            exts_buscadas,
+            include_subfolders,
+            delete_source_folders,
+        )
+
+        resumen = f"Eliminación completada. Se enviaron {len(archivos_eliminados)} archivos a la papelera."
+        if carpetas_eliminadas:
+            resumen += f" Se enviaron {len(carpetas_eliminadas)} carpetas vacías a la papelera."
+        if errores:
+            resumen += f" Errores: {len(errores)}"
+        resumen += f" {pdf_result}"
+
+        return resumen
+
+    def generar_reporte_pdf_eliminacion(self, ruta, archivos_eliminados, carpetas_eliminadas, errores, extensiones, include_subfolders, delete_source_folders):
+        try:
+            desktop = os.path.join(os.path.expanduser("~"), "Desktop")
+            reportes_dir = os.path.join(desktop, "reportes file master Pro")
+            os.makedirs(reportes_dir, exist_ok=True)
+
+            nombre_pdf = f"reporte{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+            path_pdf = os.path.join(reportes_dir, nombre_pdf)
+            c = canvas.Canvas(path_pdf, pagesize=letter)
+            width, height = letter
+            y = height - 1*inch
+
+            c.setFont("Helvetica-Bold", 16)
+            c.drawString(1*inch, y, "Create Tech Solutions - File Master Pro")
+            y -= 0.3*inch
+            c.setFont("Helvetica", 12)
+            c.drawString(1*inch, y, f"Reporte de Eliminación Selectiva - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+            y -= 0.5*inch
+
+            c.setFont("Helvetica-Bold", 10)
+            c.drawString(1*inch, y, f"Directorio Analizado: {ruta}")
+            y -= 0.2*inch
+            c.drawString(1*inch, y, f"Extensiones: {', '.join(extensiones)}")
+            y -= 0.2*inch
+            c.drawString(1*inch, y, f"Incluir subcarpetas: {'SÍ' if include_subfolders else 'NO'}")
+            y -= 0.2*inch
+            c.drawString(1*inch, y, f"Eliminar carpetas vacías: {'SÍ' if delete_source_folders else 'NO'}")
+            y -= 0.4*inch
+
+            def check_space(current_y, needed=0.2*inch):
+                if current_y < 1*inch:
+                    c.showPage()
+                    return height - 1*inch
+                return current_y
+
+            c.setFont("Helvetica-Bold", 12)
+            c.drawString(1*inch, y, "Archivos Enviados a Papelera:")
+            y -= 0.25*inch
+            c.setFont("Helvetica", 9)
+
+            for file_path in archivos_eliminados:
+                y = check_space(y)
+                display_path = (file_path[:80] + '..') if len(file_path) > 80 else file_path
+                c.drawString(1*inch, y, f"- {display_path}")
+                y -= 0.15*inch
+
+            if carpetas_eliminadas:
+                y -= 0.2*inch
+                c = self._draw_section_title(c, y, "Carpetas Enviadas a Papelera:")
+
+            if carpetas_eliminadas:
+                y -= 0.25*inch
+                c.setFont("Helvetica", 9)
+                for folder_path in carpetas_eliminadas:
+                    y = check_space(y)
+                    display_path = (folder_path[:80] + '..') if len(folder_path) > 80 else folder_path
+                    c.drawString(1*inch, y, f"- {display_path}")
+                    y -= 0.15*inch
+
+            if errores:
+                y = check_space(y, 0.4*inch)
+                c.setFillColorRGB(1, 0, 0)
+                c.setFont("Helvetica-Bold", 12)
+                c.drawString(1*inch, y, "Errores Encontrados:")
+                y -= 0.25*inch
+                c.setFont("Helvetica", 9)
+                for err in errores:
+                    y = check_space(y)
+                    c.drawString(1*inch, y, f"- {err}")
+                    y -= 0.15*inch
+                c.setFillColorRGB(0, 0, 0)
+
+            c.save()
+            return f"Reporte generado: {path_pdf}"
+        except Exception as e:
+            return f"Error generando PDF: {e}"
+
+    def _draw_section_title(self, c, y, title):
+        c.setFont("Helvetica-Bold", 12)
+        c.drawString(1*inch, y, title)
+        return c
+
     def undo_last_action(self):
         """
         Deshace la última acción realizada.

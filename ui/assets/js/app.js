@@ -1,22 +1,5 @@
 
 
-tailwind.config = {
-  darkMode: "class",
-  theme: {
-    extend: {
-      colors: {
-        cts: {
-          bg: "#111827", // Fondo ultra oscuro (slate-900)
-          card: "#1f2937", // Fondo de tarjeta (slate-800)
-          accent: "#00ff9d", // Tu verde esmeralda neón
-          text: "#f3f4f6", // Texto claro
-        },
-        danger: "#f87171",
-      },
-    },
-  },
-};
-
 const Toast = Swal.mixin({
   toast: true,
   position: "top-end",
@@ -291,6 +274,23 @@ async function ejecutarModulo(tipo) {
     config.sortByDate = document.getElementById("inteligente-sort-by-date").checked;
   }
 
+  if (tipo === "eliminacion") {
+    const extensiones = document.getElementById("custom-eliminacion").value;
+
+    if (!extensiones) {
+      notify(
+        "¡Atención!",
+        "Selecciona al menos una categoría antes de ejecutar la eliminación.",
+        "warning",
+      );
+      return;
+    }
+
+    config.extensiones = extensiones;
+    config.include_subfolders = document.getElementById("eliminacion-include-subfolders").checked;
+    config.delete_source_folders = document.getElementById("eliminar-carpet").checked;
+  }
+
   if (tipo === "extraccion") {
     // Para orden de extraccion, capturar las opciones de los checkboxes
     let folderName = document.getElementById("custom-folder-name-ext").value.trim();
@@ -401,14 +401,17 @@ function showView(viewId) {
 
 // Importante: Esperar a que el puente esté listo
 window.addEventListener("pywebviewready", async function () {
-  console.log("Puente CTS establecido");
+  // console.log("Puente CTS establecido");
   
   // Initial State: Verificar activación al cargar
   try {
     const estado = await pywebview.api.verificar_activacion();
+    document.getElementById("loader").classList.add("d-none");
+
     if (estado.activado) {
       // Mostrar dashboard
       document.getElementById("license-overlay").classList.add("d-none");
+      document.getElementById("app").classList.remove("d-none");
       console.log("Software activado - Dashboard disponible");
     } else {
       // Mostrar overlay de activación
@@ -449,7 +452,8 @@ async function validarLicenciaUI() {
     if (resultado.exito) {
       notify("¡Éxito!", resultado.mensaje, "success");
       // Ocultar overlay y mostrar dashboard
-      document.getElementById("license-overlay").classList.add("hidden");
+      document.getElementById("license-overlay").classList.add("d-none");
+      document.getElementById("app").classList.remove("d-none");
     } else {
       notify("Error", resultado.mensaje, "error");
     }

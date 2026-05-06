@@ -105,6 +105,17 @@ class CTS_Bridge:
                 return "Error: Debes seleccionar al menos una categoría de extensiones para la extracción."
                 
             return self.engine.extract_selective(data['ruta'], extensiones_raw, create_subfolders, delete_source, simulation, sort_by_date)
+
+        elif modulo == "eliminacion":
+            # Lógica para eliminación selectiva por categoría
+            extensiones_raw = data.get('extensiones', "")
+            include_subfolders = data.get('include_subfolders', True)
+            delete_source_folders = data.get('delete_source_folders', False)
+
+            if not extensiones_raw:
+                return "Error: Debes seleccionar al menos una categoría para la eliminación."
+
+            return self.engine.delete_selective(data['ruta'], extensiones_raw, include_subfolders, delete_source_folders)
             
         elif modulo == "undo":
             # Deshacer última acción
