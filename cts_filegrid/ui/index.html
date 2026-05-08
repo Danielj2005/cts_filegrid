@@ -25,13 +25,15 @@
     </div>
 
     <div id="license-overlay" class="rounded-5 bg-gray-900 d-flex align-items-center justify-content-center p-3 d-none">
-        <div class="bg-cts-card p-5 rounded-5 border border-gray-700 text-center">
-            <img src="./assets/img/logo.png" width="80rem" height="100rem" class="mx-auto">
-            <h2 class="text-xl fw-bold mb-2">Activación de Producto</h2>
-            <p class="text-gray-400 text-sm mb-6">CTS FileGrid requiere una licencia válida.</p>
+        <div class="bg-cts-card px-5 pt-0 pb-3 rounded-5 border border-gray-700 text-center">
+            
+            <img src="./assets/img/logo.png" width="200rem" height="140rem" class="mx-auto" style="width: 15rem; height: 7.5rem;">
+            <h1 class="text-xl fw-bold mb-2">CTS FileGrid</h1>
+            <p class="fw-bold mb-0 text-gray-400">Activación de Producto</p>
+            <p class="text-gray-400 text-sm mb-6">Se requiere una licencia válida.</p>
             
             <div class="text-left mb-4">
-                <label class="text-sm uppercase fw-bold">Tu ID de Hardware:</label>
+                <label class="text-sm uppercase fw-bold mb-3">Tu ID de Hardware:</label>
                 <div class="d-flex gap-2">
                     <input type="text" id="hwid-display" readonly class="mx-1 form-control flex-1 bg-gray-800 p-2 rounded text-xs border border-gray-700">
                     <button onclick="copiarHWID()" class="btn btn-secondary p-2 rounded bi bi-copy">
@@ -48,7 +50,7 @@
         </div>
     </div>
     
-    <div id="app" class="d-none">
+    <div id="app" class="d-none h-100">
 
         <header class="align-items-center justify-content-center bg-cts-card d-flex p-2" style="height: 5rem !important;">
     
@@ -133,7 +135,7 @@
                     <div class="row align-items-center justify-content-center p-0">
                         <div class="col-12 mb-2">
                             
-                            <div id="extension-badges" class="d-flex flex-wrap gap-2 mb-4">
+                            <div id="extension-badges" class="d-flex flex-wrap gap-2 mb-3">
                                 <button id="extension-docs" onclick="selectBadges('advanced','docs')" class="btn btn-outline-secondary border border-gray-700 ext-badge d-flex gap-2 align-items-center px-3 py-1 rounded-5">
                                     <i class="bi bi-file-earmark-fill"></i>Documentos
                                 </button>
@@ -161,11 +163,9 @@
                             
                             <p class="mb-2"><b>El orden avanzado puede:</b></p>
                             <ul class="list-group list-group-flush ps-5 mb-3">
-                                <li class="">Escanear carpetas y subcarpetas.</li>
-                                <li class="">Organizar los archivos dentro de cada una por tipo y/o por fecha de creación/modificación.</li>
+                                <li class="">Escanear carpetas, subcarpetas y Organiza los archivos dentro de cada una por tipo y/o por fecha de creación/modificación.</li>
                                 <li class="">Crear una carpeta con nombre personalizado para guardar los archivos ordenados.</li>
-                                <li class="">Puedes organizar los archivos de manera automática.</li>
-                                <li class="">Puedes seleccionar por categorías que archivos deseas organizar.</li>
+                                <li class="">Puedes organizar los archivos de manera automática o seleccionar por categorías que archivos deseas organizar.</li>
                                 <li class="fw-bold">Se Mantiene la jerarquía de carpetas intacta.</li>
                             </ul>
                             
@@ -194,7 +194,6 @@
                             </div>
             
                         </div>
-                        <div class="display-selected text-white">Ninguna categoría seleccionada</div>
         
                         <div class="col-12 text-center mb-3">
                             <input type="hidden" id="custom-extensions" class="cleanInput ">
@@ -218,7 +217,7 @@
                     
                     <div class="col-12 col-md-4 text-center mb-3">
                         <button onclick="ejecutarModulo('limpieza')" class="btn btn-info rounded-5 fw-bold">
-                            ESCANEAR Y ELIMINAR COPIAS 
+                            Escanear y eliminar copias
                         </button>
                     </div>
                 </div>
@@ -228,7 +227,7 @@
                 <div class="section-eliminacion bg-cts-card p-4 rounded-5 border border-gray-700">
                     <h2 class="fs-2 fw-bold mb-3 text-danger">Eliminación de archivos por selección</h2>
                     
-                    <div id="eliminacion-badges" class="d-flex flex-wrap gap-3 justify-content-between mb-3">
+                    <div id="eliminacion-badges" class="d-flex flex-wrap gap-2 mb-3">
                         <button id="eliminacion-docs" onclick="selectBadges('delete','docs')"
                             class="btn btn-outline-secondary border border-gray-700 ext-badge d-flex gap-2 align-items-center px-3 py-1 rounded-5">
                                 <i class="bi bi-file-earmark-fill"></i>Documentos
@@ -275,7 +274,7 @@
                         </div>
     
                         <div class="col-12 col-md-4 text-center mb-2 d-flex align-items-center justify-content-center">
-                            <button onclick="ejecutarModulo('eliminacion')" class="btn btn-danger rounded-5 fw-bold">Ejecutar Eliminación</button>
+                            <button onclick="ejecutarModulo('eliminacion')" class="btn btn-danger rounded-5 fw-bold">Eliminar</button>
                             <input type="hidden" id="custom-eliminacion">
                         </div>
                     </div>
@@ -289,7 +288,7 @@
                 <div class="section-ext bg-cts-card p-4 rounded-5 border border-gray-700 hover:border-purple-400">
                     <h2 class="fs-2 fw-bold mb-4 text-purple-400">Extracción de archivos por selección</h2>
                     
-                    <div id="extraction-badges" class="d-flex flex-wrap gap-2 mb-4">
+                    <div id="extraction-badges" class="d-flex flex-wrap gap-2 mb-3">
                         <button id="extraccion-docs" onclick="selectBadges('extract','docs')" class="btn btn-outline-secondary border border-gray-700 ext-badge d-flex gap-2 align-items-center px-3 py-1 rounded-5">
                             <i class="bi bi-file-earmark-fill"></i>Documentos
                         </button>
@@ -343,7 +342,7 @@
                             <input id="custom-folder-name-ext" type="text" placeholder="Ej. OrdenPersonalizada" class="cleanInput form-control p-2 rounded border border-gray-700 outline-none" />
                         </div>
                         <div class="col-12 col-md-3 text-center mb-2 d-flex align-items-center justify-content-center">
-                            <button onclick="ejecutarModulo('extraccion')" class=" btn btn-purple rounded-5 fw-bold">Ejecutar Extracción</button>
+                            <button onclick="ejecutarModulo('extraccion')" class=" btn btn-purple rounded-5 fw-bold">Extraer</button>
                             <input type="hidden" id="custom-extensions-extraccion" class="cleanInput ">
                         </div>
                     </div>
