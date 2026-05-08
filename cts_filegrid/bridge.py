@@ -114,8 +114,4 @@ class CTS_Bridge:
 
             return self.engine.delete_selective(data['ruta'], extensiones_raw, include_subfolders, delete_source_folders)
             
-        elif modulo == "undo":
-            # Deshacer última acción
-            return self.engine.undo_last_action()
-            
         return "Acción no reconocida."

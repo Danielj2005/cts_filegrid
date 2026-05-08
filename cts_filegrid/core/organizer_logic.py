@@ -562,30 +562,6 @@ class FileEngine:
         c.drawString(1*inch, y, title)
         return c
 
-    def undo_last_action(self):
-        """
-        Deshace la última acción realizada.
-        """
-        if not self.actions_log:
-            return "No hay acciones para deshacer."
-
-        # Revertir en orden inverso
-        reversed_actions = self.actions_log[::-1]
-        undone_count = 0
-        for action, src, dest in reversed_actions:
-            try:
-                if action == "move":
-                    shutil.move(dest, src)
-                elif action == "delete_folder":
-                    # No podemos recrear carpetas borradas fácilmente, así que omitir
-                    pass
-                undone_count += 1
-            except Exception as e:
-                return f"Error deshaciendo: {e}"
-
-        self.actions_log = []  # Limpiar log después de deshacer
-        return f"Se deshicieron {undone_count} acciones."
-
     def generar_reporte_pdf(self, ruta, modo_sim, archivos, carpetas, errores, sort_by_date, delete_source_folders):
         """
         Genera un reporte PDF con buen diseño.
