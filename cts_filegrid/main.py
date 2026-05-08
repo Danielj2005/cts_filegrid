@@ -62,7 +62,7 @@ if __name__ == "__main__":
     html_path = os.path.join(current_dir, 'ui', 'index.html')
     
     window = webview.create_window(
-        title='File Master Pro - Create Tech Solutions',
+        title='CTS FileGrid - Create Tech Solutions',
         url=html_path,
         js_api=api,
         width=1100,
@@ -70,4 +70,4 @@ if __name__ == "__main__":
         background_color='#111827',
     )
 
-    webview.start(debug=True)
+    webview.start(debug=False)

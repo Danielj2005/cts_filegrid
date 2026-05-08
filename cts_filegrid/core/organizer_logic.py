@@ -41,7 +41,7 @@ class FileEngine:
         'simple': Mueve todo a una carpeta raíz 'Organizado'.
         'folders': Crea subcarpetas por tipo (PDF, Imágenes, etc).
         """
-        dest_root = os.path.join(source, "CTS_Organizado")
+        dest_root = os.path.join(source, "CTS_FileGrid")
         os.makedirs(dest_root, exist_ok=True)
         
         files = [f for f in os.listdir(source) if os.path.isfile(os.path.join(source, f))]
@@ -69,6 +69,10 @@ class FileEngine:
                 new_name = f"CTS_{str(i+1).zfill(3)}_{filename}"
 
             shutil.move(src_path, os.path.join(final_dir, new_name))
+        
+        reporte = f"Organización completada."
+        
+        return reporte
             
     def get_file_hash(self, path):
         """Calcula MD5 para detectar duplicados reales."""
@@ -144,7 +148,7 @@ class FileEngine:
     def generar_reporte_pdf_limpieza(self, ruta, deleted_count, removed_items, errores):
         try:
             desktop = os.path.join(os.path.expanduser("~"), "Desktop")
-            reportes_dir = os.path.join(desktop, "reportes file master Pro")
+            reportes_dir = os.path.join(desktop, "reportes CTS FileGrid")
             os.makedirs(reportes_dir, exist_ok=True)
 
             nombre_pdf = f"reporte{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
@@ -154,7 +158,7 @@ class FileEngine:
             y = height - 1*inch
 
             c.setFont("Helvetica-Bold", 16)
-            c.drawString(1*inch, y, "Create Tech Solutions - File Master Pro")
+            c.drawString(1*inch, y, "Create Tech Solutions - CTS FileGrid")
             y -= 0.3*inch
             c.setFont("Helvetica", 12)
             c.drawString(1*inch, y, f"Reporte de Limpieza de Duplicados - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -204,7 +208,7 @@ class FileEngine:
                 c.setFillColorRGB(0, 0, 0)
 
             c.save()
-            return f"Reporte generado: {path_pdf}"
+            return f"Reporte generado en la carpeta CTS FileGrid de tu escritorio"
         except Exception as e:
             return f"Error generando PDF: {e}"
     
@@ -262,8 +266,7 @@ class FileEngine:
                         process_folder(item_path)
         
         process_folder(source_path)
-        return f"Se organizaron {count} archivos inteligentemente dentro de sus carpetas."
-    
+        return f"Se organizaron {count} archivos dentro de sus carpetas."
     
     def organize_advanced(self, source_path, extensions, folder_name, sort_by_date=False):
         """
@@ -408,7 +411,7 @@ class FileEngine:
         # Generar PDF obligatorio
         pdf_result = self.generar_reporte_pdf(source_path, simulation_mode, archivos_procesados, carpetas_eliminadas, errores, sort_by_date, delete_source_folders)
 
-        reporte = f"Extracción completada. {procesados_count} archivos procesados. {pdf_result}"
+        reporte = f"Extracción completada {procesados_count} archivos procesados. \n{pdf_result}"
         if errores:
             reporte += f" Errores: {len(errores)}"
         if carpetas_eliminadas:
@@ -480,7 +483,7 @@ class FileEngine:
     def generar_reporte_pdf_eliminacion(self, ruta, archivos_eliminados, carpetas_eliminadas, errores, extensiones, include_subfolders, delete_source_folders):
         try:
             desktop = os.path.join(os.path.expanduser("~"), "Desktop")
-            reportes_dir = os.path.join(desktop, "reportes file master Pro")
+            reportes_dir = os.path.join(desktop, "reportes CTS FileGrid")
             os.makedirs(reportes_dir, exist_ok=True)
 
             nombre_pdf = f"reporte{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
@@ -490,7 +493,7 @@ class FileEngine:
             y = height - 1*inch
 
             c.setFont("Helvetica-Bold", 16)
-            c.drawString(1*inch, y, "Create Tech Solutions - File Master Pro")
+            c.drawString(1*inch, y, "Create Tech Solutions - CTS FileGrid")
             y -= 0.3*inch
             c.setFont("Helvetica", 12)
             c.drawString(1*inch, y, f"Reporte de Eliminación Selectiva - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -550,7 +553,7 @@ class FileEngine:
                 c.setFillColorRGB(0, 0, 0)
 
             c.save()
-            return f"Reporte generado: {path_pdf}"
+            return f"Reporte generado en la carpeta CTS FileGrid de tu escritorio"
         except Exception as e:
             return f"Error generando PDF: {e}"
 
@@ -590,10 +593,10 @@ class FileEngine:
         try:
             # Crear carpeta en escritorio
             desktop = os.path.join(os.path.expanduser("~"), "Desktop")
-            reportes_dir = os.path.join(desktop, "reportes file master Pro")
+            reportes_dir = os.path.join(desktop, "reportes CTS FileGrid")
             os.makedirs(reportes_dir, exist_ok=True)
 
-            nombre_pdf = f"reporte{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+            nombre_pdf = f"reporte__{datetime.now().strftime('%Y-%m-%d__%H-%M')}.pdf"
             path_pdf = os.path.join(reportes_dir, nombre_pdf)
             c = canvas.Canvas(path_pdf, pagesize=letter)
             width, height = letter
@@ -601,7 +604,7 @@ class FileEngine:
 
             # Encabezado
             c.setFont("Helvetica-Bold", 16)
-            c.drawString(1*inch, y, "Create Tech Solutions - File Master Pro")
+            c.drawString(1*inch, y, "Create Tech Solutions - CTS FileGrid")
             y -= 0.3*inch
             c.setFont("Helvetica", 12)
             c.drawString(1*inch, y, f"Reporte de Extracción Selectiva - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
@@ -666,7 +669,7 @@ class FileEngine:
                     y -= 0.15*inch
 
             c.save()
-            return f"Reporte generado: {path_pdf}"
+            return "Reporte PDF generado en la carpeta CTS FileGrid de tu escritorio"
         except Exception as e:
             return f"Error generando PDF: {e}"
     

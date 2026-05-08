@@ -61,12 +61,7 @@ class CTS_Bridge:
             # Usa la configuración por defecto
             return self.engine.organize(data['ruta'], mode="folders")
         
-        elif modulo == "inteligente":
-            # Lógica específica para orden inteligente: organiza dentro de carpetas por tipo y fecha
-            include_subfolders = data.get('includeSubfolders', True)
-            sort_by_date = data.get('sortByDate', True)
-            return self.engine.organize_inteligente(data['ruta'], include_subfolders, sort_by_date)
-            
+        
         elif modulo == "limpieza":
             # Lógica para limpieza de archivos duplicados - en segundo plano
             def limpieza_thread(source_path):
@@ -80,17 +75,19 @@ class CTS_Bridge:
             return "Procesando limpieza de duplicados en segundo plano..."
             
         elif modulo == "avanzado":
-            # Lógica que usa configuraciones personalizadas
+            # Lógica que usa configuraciones personalizadas, opcionalmente con orden automático si no se seleccionan categorías.
             extensiones_raw = data.get('extensiones', "")
             folder_name = data.get('folderName', "Personalizado")
             sort_by_date = data.get('sortByDate', False)
-            
+            include_subfolders = data.get('includeSubfolders', True)
+
             # Convertimos la cadena ".exe, .msi" en una lista limpia
             lista_exts = [e.strip().lower() for e in extensiones_raw.split(',') if e.strip()]
-            
+
             if not lista_exts:
-                return "Error: Debes especificar al menos una extensión en el modo avanzado."
-                
+                # Si no se seleccionaron categorías, se usa la lógica original de orden inteligente
+                return self.engine.organize_inteligente(data['ruta'], include_subfolders, sort_by_date)
+
             return self.engine.organize_advanced(data['ruta'], lista_exts, folder_name, sort_by_date)
             
         elif modulo == "extraccion":

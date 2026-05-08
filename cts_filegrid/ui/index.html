@@ -169,7 +169,7 @@
                                 <li class="fw-bold">Se Mantiene la jerarquía de carpetas intacta.</li>
                             </ul>
                             
-                            <p class="alert alert-danger p-1" style="width: fit-content">Si no seleccionas una categpría los archivos se organizarán de manera automática.</p>
+                            <p class="alert alert-danger p-1" style="width: fit-content">Si no seleccionas una categoría, los archivos se organizarán automáticamente usando todas las categorías disponibles.</p>
                             <div id="containerCategoriesAdvanced" class="display-selected text-white p-1 px-3 alert alert-success" style="width: fit-content">Ninguna categoría seleccionada</div>
 
                         </div>
@@ -197,7 +197,8 @@
                         <div class="display-selected text-white">Ninguna categoría seleccionada</div>
         
                         <div class="col-12 text-center mb-3">
-                            <button onclick="ejecutarModulo('inteligente')" class="btn btn-primary rounded-5 fw-bold">
+                            <input type="hidden" id="custom-extensions" class="cleanInput ">
+                            <button onclick="ejecutarModulo('avanzado')" class="btn btn-primary rounded-5 fw-bold">
                                 Organizar
                             </button>
                         </div>
@@ -350,59 +351,6 @@
 
                 </div>
             </section>
-            
-            <section id="view-avanzado" style="display:none" class="view mb-5">
-                <div class="section-avanzado bg-cts-card p-4 rounded-5 border ">
-                    <h2 class="fs-2 fw-bold mb-4 text-indigo">Selección Inteligente de Archivos</h2>
-                    <div id="extension-badges" class="d-flex flex-wrap gap-2 mb-4">
-                        <button id="extension-docs" onclick="selectBadges('advanced','docs')" class="btn btn-outline-secondary border border-gray-700 ext-badge d-flex gap-2 align-items-center px-3 py-1 rounded-5">
-                            <i class="bi bi-file-earmark-fill"></i>Documentos
-                        </button>
-    
-                        <button id="extension-imgs" onclick="selectBadges('advanced','imgs')" class="btn btn-outline-secondary border border-gray-700 ext-badge d-flex gap-2 align-items-center px-3 py-1 rounded-5 transition-all">
-                            <i class="bi bi-images"></i>Imágenes
-                        </button>
-    
-                        <button id="extension-videos" onclick="selectBadges('advanced','videos')" class="btn btn-outline-secondary border border-gray-700 ext-badge d-flex gap-2 align-items-center px-3 py-1 rounded-5 transition-all">
-                            <i class="bi bi-camera-video"></i>Videos
-                        </button>
-    
-                        <button id="extension-audio" onclick="selectBadges('advanced','audio')" class="btn btn-outline-secondary border border-gray-700 ext-badge d-flex gap-2 align-items-center px-3 py-1 rounded-5 ">
-                            <i class="bi bi-headphones"></i>Audio
-                        </button>
-    
-                        <button id="extension-compressed" onclick="selectBadges('advanced','compressed')" class="btn btn-outline-secondary border border-gray-700 ext-badge d-flex gap-2 align-items-center px-3 py-1 rounded-5 ">
-                            <i class="bi bi-file-zip-fill"></i>Comprimidos
-                        </button>
-    
-                        <button id="extension-prog" onclick="selectBadges('advanced','prog')" class="btn btn-outline-secondary border border-gray-700 ext-badge d-flex gap-2 align-items-center px-3 py-1 rounded-5 ">
-                            <i class="bi bi-gear"></i>Programas
-                        </button>
-                    </div>
-                    
-                    <div class="m-0 p-0 align-items-center row mb-2 ">
-                        
-                        <div class="col-12 col-md-9 mb-2">
-                                    
-                            <div class="d-flex gap-2 align-items-center mb-2">
-                                <input class="cleanInput bg-transparent form-check-input fs-5" type="checkbox" value="" id="sort-by-date2">
-                                <label class="form-check-label" for="sort-by-date2">Ordenar por fecha (Año/Mes)</label>
-                            </div>
-                            <div class="mb-2">
-                                <label class="mb-2 block">Nombre de carpeta destino</label>
-                                <input id="custom-folder-name" type="text" placeholder="Ej. OrdenPersonalizada" class="form-control p-2 rounded border" />
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-3 text-center mb-2 d-flex align-items-center justify-content-center">
-                            
-                            <button onclick="ejecutarModulo('avanzado')" class="btn btn-indigo rounded-5 fw-bold">Ejecutar Avanzado</button>
-                            <input type="hidden" id="custom-extensions">
-                        </div>
-                    </div>
-                    <div class="display-selected text-white">Ninguna categoría seleccionada</div>
-                </div>
-            </section>
-    
     
         </main>
         <footer class="bg-gray-800 text-gray-400 text-center p-4 text-sm">

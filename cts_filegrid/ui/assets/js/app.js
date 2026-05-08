@@ -68,7 +68,6 @@ const ext_tag = {
 const idSections = {
   delete: "view-eliminacion",
   extract: "view-extraccion",
-  advanced: "view-avanzado",
   multimedia: "view-multimedia",
   dash: "view-dashboard",
   clean: "view-limpieza"
@@ -175,19 +174,9 @@ function limpiaTags (action) {
 }
 
 
-function $$ready(fn) {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', fn);
-  } else {
-    fn();
-  }
-}
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById("input-ruta").addEventListener("click", seleccionarCarpetaUI);
 
-$$ready(() => {
-  const inputRuta = document.getElementById("input-ruta");
-  if (inputRuta) {
-    inputRuta.addEventListener("focus", seleccionarCarpetaUI);
-  }
 });
 
 async function seleccionarCarpetaUI() {
@@ -242,20 +231,15 @@ async function ejecutarModulo(tipo) {
   let config = { ruta: ruta };
 
   if (tipo === "avanzado") {
-    const extensiones = document.getElementById("custom-extensions").value;
+    const extensiones = document.getElementById("custom-extensions").value.trim();
     let folderName = document.getElementById("custom-folder-name").value.trim();
+    const includeSubfolders = document.getElementById("inteligente-include-subfolders").checked;
+    const sortByDate = document.getElementById("sort-by-date2").checked;
 
-    if (!extensiones) {
-      notify(
-        "¡Atención!",
-        "Selecciona al menos una categoría antes de ejecutar el modo avanzado.",
-        "warning",
-      );
-      return;
-    }
+    const categorias = Array.from(categoriasSeleccionadas);
+    const usarOrdenAutomatico = extensiones.length === 0;
 
     if (!folderName) {
-      const categorias = Array.from(categoriasSeleccionadas);
       if (categorias.length === 1) {
         folderName = etiquetasExtensiones[categorias[0]] || "Personalizado";
       } else if (categorias.length > 1) {
@@ -269,13 +253,9 @@ async function ejecutarModulo(tipo) {
 
     config.extensiones = extensiones;
     config.folderName = folderName;
-    config.sortByDate = document.getElementById("sort-by-date2").checked;
-  }
-
-  if (tipo === "inteligente") {
-    // Para orden inteligente, capturar las opciones de los checkboxes
-    config.includeSubfolders = document.getElementById("inteligente-include-subfolders").checked;
     config.sortByDate = document.getElementById("inteligente-sort-by-date").checked;
+    config.includeSubfolders = includeSubfolders;
+    config.useAutomaticCategories = usarOrdenAutomatico;
   }
 
   if (tipo === "eliminacion") {
