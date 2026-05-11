@@ -234,7 +234,6 @@ async function ejecutarModulo(tipo) {
     const extensiones = document.getElementById("custom-extensions").value.trim();
     let folderName = document.getElementById("custom-folder-name").value.trim();
     const includeSubfolders = document.getElementById("inteligente-include-subfolders").checked;
-    const sortByDate = document.getElementById("sort-by-date2").checked;
 
     const categorias = Array.from(categoriasSeleccionadas);
     const usarOrdenAutomatico = extensiones.length === 0;
